@@ -1,5 +1,8 @@
+// App.jsx
 
 import './App.css'
+const clientId = import.meta.env.VITE_CLIENT_ID;
+const clientSecret = import.meta.env.VITE_CLIENT_SECRET;
 
 function App() {
   
