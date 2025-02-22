@@ -8,6 +8,7 @@ import {
   Row,
 } from "react-bootstrap";
 import { useState, useEffect } from "react";
+import { useSpotifySearch } from "./hooks/useSpotifySearch"; // Import the custom hook
 
 const clientId = import.meta.env.VITE_CLIENT_ID;
 const clientSecret = import.meta.env.VITE_CLIENT_SECRET;
@@ -15,8 +16,16 @@ const clientSecret = import.meta.env.VITE_CLIENT_SECRET;
 function App() {
   const [searchInput, setSearchInput] = useState("");
   const [accessToken, setAccessToken] = useState("");
-  const [albums, setAlbums] = useState([]);
-  const [error, setError] = useState(null);
+  const {
+    albums,
+    error,
+    search,
+    loading,
+    currentPage,
+    totalPages,
+    setCurrentPage,
+  } = useSpotifySearch(accessToken); // Use the custom hook
+  const [searchInitiated, setSearchInitiated] = useState(false);
 
   useEffect(() => {
     const getAccessToken = async () => {
@@ -39,7 +48,9 @@ function App() {
         );
         const data = await result.json();
         if (!result.ok) {
-          throw new Error(data.error_description || "Failed to fetch access token");
+          throw new Error(
+            data.error_description || "Failed to fetch access token"
+          );
         }
         setAccessToken(data.access_token);
       } catch (err) {
@@ -51,47 +62,10 @@ function App() {
     getAccessToken();
   }, []);
 
-  async function search() {
-    try {
-      let artistParams = {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + accessToken,
-        },
-      };
-
-      // Get Artist
-      const artistID = await fetch(
-        "https://api.spotify.com/v1/search?q=" + searchInput + "&type=artist",
-        artistParams
-      )
-        .then((result) => result.json())
-        .then((data) => {
-          if (data.artists.items.length === 0) {
-            throw new Error("No artist found");
-          }
-          return data.artists.items[0].id;
-        });
-
-      // Get Artist Albums
-      const albumsResult = await fetch(
-        "https://api.spotify.com/v1/artists/" +
-          artistID +
-          "/albums?include_groups=album&market=US&limit=50",
-        artistParams
-      );
-      const albumsData = await albumsResult.json();
-      setAlbums(albumsData.items);
-      if (!albumsResult.ok) {
-        throw new Error(albumsData.error.message || "Failed to fetch albums");
-      }
-    } catch (err) {
-      setError(err.message);
-      setAlbums([]);
-      console.error("Error during search:", err);
-    }
-  }
+  const handleSearch = (page = 1) => {
+    setSearchInitiated(true);
+    search(searchInput, page);
+  };
 
   return (
     <>
@@ -103,7 +77,7 @@ function App() {
             aria-label="Search for an Artist"
             onKeyDown={(event) => {
               if (event.key === "Enter") {
-                search();
+                handleSearch();
               }
             }}
             onChange={(event) => setSearchInput(event.target.value)}
@@ -117,10 +91,14 @@ function App() {
               paddingLeft: "10px",
             }}
           />
-          <Button onClick={search}>Search</Button>
+          <Button onClick={() => handleSearch()} disabled={loading}>
+            {loading ? "Searching..." : "Search"}
+          </Button>
         </InputGroup>
       </Container>
-      {error && <div style={{ color: "red", textAlign: "center" }}>Error: {error}</div>}
+      {error && (
+        <div style={{ color: "red", textAlign: "center" }}>Error: {error}</div>
+      )}
       <Container>
         <Row
           style={{
@@ -131,62 +109,99 @@ function App() {
             alignContent: "center",
           }}
         >
-          {albums.map((album) => {
-            return (
-              <Card
-                key={album.id}
-                style={{
-                  backgroundColor: "white",
-                  margin: "10px",
-                  borderRadius: "5px",
-                  marginBottom: "30px",
-                }}
-              >
-                <Card.Img
-                  width={200}
-                  src={album.images[0].url}
+          {loading && searchInitiated ? (
+            <div style={{ textAlign: "center", color: "black" }}>
+              Loading...
+            </div>
+          ) : albums.length === 0 && !error && searchInitiated ? (
+            <div style={{ textAlign: "center", color: "black" }}>
+              No albums found.
+            </div>
+          ) : (
+            albums.map((album) => {
+              return (
+                <Card
+                  key={album.id}
                   style={{
-                    borderRadius: "4%",
+                    backgroundColor: "white",
+                    margin: "10px",
+                    borderRadius: "5px",
+                    marginBottom: "30px",
                   }}
-                />
-                <Card.Body>
-                  <Card.Title
+                >
+                  <Card.Img
+                    width={200}
+                    src={album.images[0].url}
                     style={{
-                      whiteSpace: "wrap",
-                      fontWeight: "bold",
-                      maxWidth: "200px",
-                      fontSize: "18px",
-                      marginTop: "10px",
-                      color: "black",
+                      borderRadius: "4%",
                     }}
-                  >
-                    {album.name}
-                  </Card.Title>
-                  <Card.Text
-                    style={{
-                      color: "black",
-                    }}
-                  >
-                    Release Date: <br /> {album.release_date}
-                  </Card.Text>
-                  <Button
-                    href={album.external_urls.spotify}
-                    style={{
-                      backgroundColor: "black",
-                      color: "white",
-                      fontWeight: "bold",
-                      fontSize: "15px",
-                      borderRadius: "5px",
-                      padding: "10px",
-                    }}
-                  >
-                    Album Link
-                  </Button>
-                </Card.Body>
-              </Card>
-            );
-          })}
+                  />
+                  <Card.Body>
+                    <Card.Title
+                      style={{
+                        whiteSpace: "wrap",
+                        fontWeight: "bold",
+                        maxWidth: "200px",
+                        fontSize: "18px",
+                        marginTop: "10px",
+                        color: "black",
+                      }}
+                    >
+                      {album.name}
+                    </Card.Title>
+                    <Card.Text
+                      style={{
+                        color: "black",
+                      }}
+                    >
+                      Release Date: <br /> {album.release_date}
+                    </Card.Text>
+                    <Button
+                      href={album.external_urls.spotify}
+                      style={{
+                        backgroundColor: "black",
+                        color: "white",
+                        fontWeight: "bold",
+                        fontSize: "15px",
+                        borderRadius: "5px",
+                        padding: "10px",
+                      }}
+                    >
+                      Album Link
+                    </Button>
+                  </Card.Body>
+                </Card>
+              );
+            })
+          )}
         </Row>
+        {totalPages > 1 && (
+          <Row
+            style={{
+              justifyContent: "center",
+              marginTop: "20px",
+              marginBottom: "20px",
+            }}
+          >
+            <Button
+              onClick={() => handleSearch(currentPage - 1)}
+              disabled={currentPage === 1 || loading}
+              style={{ marginRight: "10px" }}
+            >
+              Previous
+            </Button>
+            <span>
+              Page {currentPage} of {totalPages}
+            </span>
+            <Button
+              onClick={() => handleSearch(currentPage + 1)}
+              disabled={currentPage === totalPages || loading}
+              style={{ marginLeft: "10px" }}
+            >
+              Next
+            </Button>
+          </Row>
+        )}
       </Container>
     </>
   );
