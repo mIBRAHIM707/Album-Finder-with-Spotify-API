@@ -8,6 +8,8 @@ const clientSecret = import.meta.env.VITE_CLIENT_SECRET;
 function App() {
   const [searchInput, setSearchInput] = useState("");
   const [accessToken, setAccessToken] = useState("");
+  const [albums, setAlbums] = useState([]);
+
 
   useEffect(() => {
     let authParams = {
@@ -48,6 +50,18 @@ function App() {
       });
     console.log("Search Input: " + searchInput);
     console.log("Artist ID: " + artistID);  
+
+    // Get Artist Albums
+    await fetch(
+      "https://api.spotify.com/v1/artists/" +
+        artistID +
+        "/albums?include_groups=album&market=US&limit=50",
+      artistParams
+    )
+      .then((result) => result.json())
+      .then((data) => {
+        setAlbums(data.items);
+      });
   }
 
   return (
