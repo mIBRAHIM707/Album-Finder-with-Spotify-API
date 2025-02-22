@@ -1,5 +1,5 @@
 import "./App.css";
-import { FormControl, InputGroup, Container, Button } from "react-bootstrap";
+import { FormControl, InputGroup, Container, Button, Row, Card} from "react-bootstrap";
 import { useState, useEffect } from "react";
 
 const clientId = import.meta.env.VITE_CLIENT_ID;
@@ -61,6 +61,7 @@ function App() {
       .then((result) => result.json())
       .then((data) => {
         setAlbums(data.items);
+        console.log("Artist Albums: ", data.items); // Added console log
       });
   }
 
