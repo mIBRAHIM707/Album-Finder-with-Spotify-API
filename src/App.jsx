@@ -16,57 +16,81 @@ function App() {
   const [searchInput, setSearchInput] = useState("");
   const [accessToken, setAccessToken] = useState("");
   const [albums, setAlbums] = useState([]);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    let authParams = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body:
-        "grant_type=client_credentials&client_id=" +
-        clientId +
-        "&client_secret=" +
-        clientSecret,
+    const getAccessToken = async () => {
+      try {
+        let authParams = {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body:
+            "grant_type=client_credentials&client_id=" +
+            clientId +
+            "&client_secret=" +
+            clientSecret,
+        };
+
+        const result = await fetch(
+          "https://accounts.spotify.com/api/token",
+          authParams
+        );
+        const data = await result.json();
+        if (!result.ok) {
+          throw new Error(data.error_description || "Failed to fetch access token");
+        }
+        setAccessToken(data.access_token);
+      } catch (err) {
+        setError(err.message);
+        console.error("Error fetching access token:", err);
+      }
     };
 
-    fetch("https://accounts.spotify.com/api/token", authParams)
-      .then((result) => result.json())
-      .then((data) => {
-        setAccessToken(data.access_token);
-      });
+    getAccessToken();
   }, []);
 
   async function search() {
-    let artistParams = {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + accessToken,
-      },
-    };
+    try {
+      let artistParams = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + accessToken,
+        },
+      };
 
-    // Get Artist
-    const artistID = await fetch(
-      "https://api.spotify.com/v1/search?q=" + searchInput + "&type=artist",
-      artistParams
-    )
-      .then((result) => result.json())
-      .then((data) => {
-        return data.artists.items[0].id;
-      });
+      // Get Artist
+      const artistID = await fetch(
+        "https://api.spotify.com/v1/search?q=" + searchInput + "&type=artist",
+        artistParams
+      )
+        .then((result) => result.json())
+        .then((data) => {
+          if (data.artists.items.length === 0) {
+            throw new Error("No artist found");
+          }
+          return data.artists.items[0].id;
+        });
 
-    // Get Artist Albums
-    await fetch(
-      "https://api.spotify.com/v1/artists/" +
-        artistID +
-        "/albums?include_groups=album&market=US&limit=50",
-      artistParams
-    )
-      .then((result) => result.json())
-      .then((data) => {
-        setAlbums(data.items);
-      });
+      // Get Artist Albums
+      const albumsResult = await fetch(
+        "https://api.spotify.com/v1/artists/" +
+          artistID +
+          "/albums?include_groups=album&market=US&limit=50",
+        artistParams
+      );
+      const albumsData = await albumsResult.json();
+      setAlbums(albumsData.items);
+      if (!albumsResult.ok) {
+        throw new Error(albumsData.error.message || "Failed to fetch albums");
+      }
+    } catch (err) {
+      setError(err.message);
+      setAlbums([]);
+      console.error("Error during search:", err);
+    }
   }
 
   return (
@@ -96,7 +120,7 @@ function App() {
           <Button onClick={search}>Search</Button>
         </InputGroup>
       </Container>
-
+      {error && <div style={{ color: "red", textAlign: "center" }}>Error: {error}</div>}
       <Container>
         <Row
           style={{
