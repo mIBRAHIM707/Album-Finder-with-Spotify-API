@@ -139,6 +139,7 @@ function App() {
                             display: "flex",
                             flexDirection: "column",
                             alignItems: "center", // Center content within the card
+                            minWidth: "200px", // added minWidth to Card
                           }}
                         >
                           <Link to={`/album/${album.id}`}>
@@ -159,13 +160,14 @@ function App() {
                           >
                             <Card.Title
                               style={{
-                                whiteSpace: "nowrap",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap", // Prevent text from wrapping
+                                overflow: "hidden",      // Hide overflowing text
+                                textOverflow: "ellipsis", // Add ellipsis (...) to indicate overflow
                                 fontWeight: "bold",
                                 fontSize: "18px",
                                 marginTop: "10px",
                                 color: "black",
+                                maxWidth: "180px", // Reduce maxWidth of Card.Title
                               }}
                             >
                               {album.name}
@@ -207,7 +209,11 @@ function App() {
                     <Button
                       onClick={() => handleSearch(currentPage - 1)}
                       disabled={currentPage === 1 || loading}
-                      style={{ marginRight: "10px" }}
+                      style={{
+                        marginRight: "10px",
+                        fontSize: "14px",
+                        width: "80px",
+                      }} // Reduced font size and width
                     >
                       Previous
                     </Button>
@@ -217,7 +223,11 @@ function App() {
                     <Button
                       onClick={() => handleSearch(currentPage + 1)}
                       disabled={currentPage === totalPages || loading}
-                      style={{ marginLeft: "10px" }}
+                      style={{
+                        marginLeft: "10px",
+                        fontSize: "14px",
+                        width: "80px",
+                      }} // Reduced font size and width
                     >
                       Next
                     </Button>
