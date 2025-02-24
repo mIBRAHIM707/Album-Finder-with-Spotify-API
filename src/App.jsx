@@ -7,6 +7,8 @@ import spotifyApi from './services/spotifyApi';
 import { useSpotifySearch } from "./hooks/useSpotifySearch";
 import AlbumSkeleton from "./components/AlbumSkeleton";
 import ErrorMessage from "./components/ErrorMessage";
+import SearchFilters from "./components/SearchFilters";
+import { useSearchHistory } from "./hooks/useSearchHistory";
 
 // Lazy load components
 const AlbumDetails = React.lazy(() => import("./AlbumDetails"));
@@ -28,15 +30,50 @@ function App() {
     setCurrentPage,
   } = useSpotifySearch(accessToken); // Use the custom hook
   const [searchInitiated, setSearchInitiated] = useState(false);
+  const [filters, setFilters] = useState({
+    year: '',
+    sortBy: 'recent'
+  });
+  const { searchHistory, addToHistory, clearHistory } = useSearchHistory();
 
   // Memoize the filtered albums
   const memoizedAlbums = useMemo(() => albums, [albums]);
+
+  // Filter and sort albums
+  const filteredAlbums = useMemo(() => {
+    let result = [...memoizedAlbums];
+    
+    if (filters.year) {
+      result = result.filter(album => album.release_date.startsWith(filters.year));
+    }
+    
+    switch (filters.sortBy) {
+      case 'oldest':
+        result.sort((a, b) => a.release_date.localeCompare(b.release_date));
+        break;
+      case 'name':
+        result.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      default: // 'recent'
+        result.sort((a, b) => b.release_date.localeCompare(a.release_date));
+    }
+    
+    return result;
+  }, [memoizedAlbums, filters]);
 
   // Remove the debounced search input since we want immediate search on button click
   const handleSearch = (page = 1) => {
     if (!searchInput.trim()) return;
     setSearchInitiated(true);
+    addToHistory(searchInput);
     search(searchInput, page);
+  };
+
+  const handleFilterChange = (filterName, value) => {
+    setFilters(prev => ({
+      ...prev,
+      [filterName]: value
+    }));
   };
 
   // Remove the debounce effect as we want manual search control
@@ -89,7 +126,7 @@ function App() {
                   <div className="d-flex flex-column align-items-center">
                     {/* Search Bar Section */}
                     <div className="w-100 mb-4" style={{ maxWidth: '500px' }}>
-                      <InputGroup>
+                      <InputGroup className="mb-3">
                         <FormControl
                           placeholder="Search For Artist"
                           type="input"
@@ -116,6 +153,39 @@ function App() {
                           {loading ? "Searching..." : "Search"}
                         </StyledButton>
                       </InputGroup>
+                      
+                      {/* Search History */}
+                      {searchHistory.length > 0 && (
+                        <div className="mb-3">
+                          <small className="text-muted">Recent searches: </small>
+                          {searchHistory.map((term, index) => (
+                            <button
+                              key={index}
+                              className="btn btn-link btn-sm"
+                              onClick={() => {
+                                setSearchInput(term);
+                                search(term, 1);
+                              }}
+                            >
+                              {term}
+                            </button>
+                          ))}
+                          <button
+                            className="btn btn-link btn-sm text-danger"
+                            onClick={clearHistory}
+                          >
+                            Clear
+                          </button>
+                        </div>
+                      )}
+
+                      {/* Filters */}
+                      {searchInitiated && (
+                        <SearchFilters
+                          filters={filters}
+                          onFilterChange={handleFilterChange}
+                        />
+                      )}
                     </div>
 
                     {/* Error Message */}
@@ -137,7 +207,7 @@ function App() {
                               <AlbumSkeleton />
                             </Col>
                           ))
-                        ) : memoizedAlbums.length === 0 && !error && searchInitiated ? (
+                        ) : filteredAlbums.length === 0 && !error && searchInitiated ? (
                           <Col xs={12} className="text-center py-5">
                             <div className="w-100">
                               <h4 className="mb-3">No albums found</h4>
@@ -145,7 +215,7 @@ function App() {
                             </div>
                           </Col>
                         ) : (
-                          memoizedAlbums.map((album) => (
+                          filteredAlbums.map((album) => (
                             <Col key={album.id}>
                               <AlbumCard album={album} />
                             </Col>
