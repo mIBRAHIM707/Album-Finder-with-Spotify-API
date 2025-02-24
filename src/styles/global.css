@@ -1,0 +1,79 @@
+body {
+  background-color: #121212;
+  color: #FFFFFF;
+}
+
+.card {
+  background-color: #282828 !important;
+  border: none !important;
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.btn-primary {
+  background-color: #1DB954 !important;
+  border: none !important;
+}
+
+.btn-primary:hover {
+  background-color: #1ed760 !important;
+}
+
+.form-control {
+  background-color: #282828 !important;
+  border: 1px solid #404040 !important;
+  color: #FFFFFF !important;
+}
+
+.form-control:focus {
+  background-color: #404040 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 0 0 0.2rem rgba(29, 185, 84, 0.25) !important;
+}
+
+.badge {
+  padding: 8px 12px !important;
+  font-size: 0.85em !important;
+}
+
+.navbar {
+  background-color: rgba(0, 0, 0, 0.8) !important;
+  backdrop-filter: blur(10px);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #121212;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #404040;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #505050;
+}
+
+/* Loading Animation */
+.loading-skeleton {
+  background: linear-gradient(90deg, #282828 25%, #383838 50%, #282828 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

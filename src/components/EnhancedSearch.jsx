@@ -2,6 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { FormControl, InputGroup, Dropdown, Form } from 'react-bootstrap';
 import StyledButton from './StyledButton';
 import spotifyApi from '../services/spotifyApi';
+import styled from 'styled-components';
+
+const SearchContainer = styled.div`
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 20px 0;
+  background: linear-gradient(180deg, #121212 0%, rgba(18, 18, 18, 0.8) 100%);
+  backdrop-filter: blur(10px);
+`;
 
 const EnhancedSearch = ({ onSearch, loading }) => {
   const [query, setQuery] = useState('');
@@ -35,8 +45,8 @@ const EnhancedSearch = ({ onSearch, loading }) => {
   };
 
   return (
-    <div className="position-relative">
-      <InputGroup className="mb-3">
+    <SearchContainer>
+      <InputGroup className="search-input-group">
         <Form.Select 
           style={{ maxWidth: '120px' }}
           value={searchType}
@@ -73,7 +83,7 @@ const EnhancedSearch = ({ onSearch, loading }) => {
           ))}
         </Dropdown.Menu>
       )}
-    </div>
+    </SearchContainer>
   );
 };
 

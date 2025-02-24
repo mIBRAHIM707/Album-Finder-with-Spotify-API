@@ -6,27 +6,19 @@ import LazyImage from './LazyImage';
 
 const AlbumCard = ({ album }) => {
   return (
-    <Card
-      style={{
-        backgroundColor: "white",
-        borderRadius: "5px",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        minWidth: "200px",
-        height: '100%',
-      }}
-    >
-      <Link to={`/album/${album.id}`}>
+    <Card className="album-card h-100">
+      <Link 
+        to={`/album/${album.id}`}
+        className="album-image-container"
+      >
         <LazyImage
           src={album.images[0].url}
           alt={album.name}
-          style={{
-            borderRadius: "4%",
-            width: "100%",
-            objectFit: "cover",
-          }}
+          className="album-image"
         />
+        <div className="album-overlay">
+          <i className="fas fa-play-circle"></i>
+        </div>
       </Link>
       <Card.Body style={{ textAlign: "center", width: '100%' }}>
         <OverlayTrigger
