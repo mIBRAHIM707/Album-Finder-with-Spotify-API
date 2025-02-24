@@ -4,6 +4,7 @@ import { Container, Row, Col, Image, Badge, ProgressBar } from "react-bootstrap"
 import TrackList from "./components/TrackList";
 import ArtistInfo from './components/ArtistInfo';
 import RelatedAlbums from './components/RelatedAlbums';
+import ArtistMetrics from './components/ArtistMetrics';
 
 const AlbumDetails = () => {
   const { id } = useParams();
@@ -11,6 +12,7 @@ const AlbumDetails = () => {
   const [tracks, setTracks] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [artistAlbums, setArtistAlbums] = useState([]);
   const accessToken = localStorage.getItem("accessToken"); // Retrieve access token
 
   const formatReleaseDate = (date) => {
@@ -22,7 +24,7 @@ const AlbumDetails = () => {
   };
 
   useEffect(() => {
-    const fetchAlbumDetails = async () => {
+    const fetchData = async () => {
       setLoading(true);
       setError(null);
       try {
@@ -36,12 +38,23 @@ const AlbumDetails = () => {
           }
         );
 
-        if (!albumResult.ok) {
-          throw new Error("Failed to fetch album details");
-        }
-
+        if (!albumResult.ok) throw new Error("Failed to fetch album details");
         const albumData = await albumResult.json();
         setAlbum(albumData);
+
+        // Fetch all artist albums for visualization
+        const artistAlbumsResult = await fetch(
+          `https://api.spotify.com/v1/artists/${albumData.artists[0].id}/albums?include_groups=album&market=US&limit=50`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+
+        if (!artistAlbumsResult.ok) throw new Error("Failed to fetch artist albums");
+        const artistAlbumsData = await artistAlbumsResult.json();
+        setArtistAlbums(artistAlbumsData.items);
 
         // Fetch album tracks
         const tracksResult = await fetch(
@@ -61,13 +74,13 @@ const AlbumDetails = () => {
         setTracks(tracksData.items);
       } catch (err) {
         setError(err.message);
-        console.error("Error fetching album details:", err);
+        console.error("Error fetching details:", err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchAlbumDetails();
+    fetchData();
   }, [id, accessToken]);
 
   if (loading) {
@@ -142,6 +155,9 @@ const AlbumDetails = () => {
           
           {/* Artist Information */}
           <ArtistInfo artistId={album.artists[0].id} />
+          
+          {/* Artist Metrics */}
+          <ArtistMetrics albums={artistAlbums} />
           
           {/* Track List */}
           <h4 className="mb-3">Tracks</h4>
