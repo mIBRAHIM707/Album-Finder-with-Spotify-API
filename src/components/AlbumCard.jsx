@@ -79,4 +79,4 @@ AlbumCard.propTypes = {
   }).isRequired,
 };
 
-export default React.memo(AlbumCard);
+export default AlbumCard;

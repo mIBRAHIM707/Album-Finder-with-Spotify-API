@@ -1,6 +1,5 @@
-import React, { useState, useEffect, Suspense, useMemo, useCallback } from "react";
+import React, { useState, useEffect, Suspense, useMemo } from "react";
 import { FormControl, InputGroup, Container, Row, Col } from "react-bootstrap";
-import { useDebounce } from "./hooks/useDebounce";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import StyledButton from "./components/StyledButton";
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -28,23 +27,17 @@ function App() {
   } = useSpotifySearch(accessToken); // Use the custom hook
   const [searchInitiated, setSearchInitiated] = useState(false);
 
-  const debouncedSearchInput = useDebounce(searchInput, 500);
-
   // Memoize the filtered albums
   const memoizedAlbums = useMemo(() => albums, [albums]);
 
-  // Memoize the search handler
-  const handleSearch = useCallback((page = 1) => {
+  // Remove the debounced search input since we want immediate search on button click
+  const handleSearch = (page = 1) => {
+    if (!searchInput.trim()) return;
     setSearchInitiated(true);
-    search(debouncedSearchInput, page);
-  }, [debouncedSearchInput, search]);
+    search(searchInput, page);
+  };
 
-  // Effect to trigger search when debounced input changes
-  useEffect(() => {
-    if (debouncedSearchInput && searchInitiated) {
-      handleSearch(1);
-    }
-  }, [debouncedSearchInput, handleSearch, searchInitiated]);
+  // Remove the debounce effect as we want manual search control
 
   useEffect(() => {
     const getAccessToken = async () => {
@@ -79,120 +72,113 @@ function App() {
   return (
     <Router>
       <ErrorBoundary>
-        <Suspense fallback={<div>Loading...</div>}>
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <>
-                  <Container>
-                    <InputGroup>
-                      <FormControl
-                        placeholder="Search For Artist"
-                        type="input"
-                        aria-label="Search for an Artist"
-                        onKeyDown={(event) => {
-                          if (event.key === "Enter") {
-                            handleSearch();
-                          }
-                        }}
-                        onChange={(event) => setSearchInput(event.target.value)}
-                        style={{
-                          width: "300px",
-                          height: "35px",
-                          borderWidth: "0px",
-                          borderStyle: "solid",
-                          borderRadius: "5px",
-                          marginRight: "10px",
-                          paddingLeft: "10px",
-                        }}
-                      />
-                      <StyledButton onClick={() => handleSearch()} disabled={loading}>
-                        {loading ? "Searching..." : "Search"}
-                      </StyledButton>
-                    </InputGroup>
-                  </Container>
-                  {error && (
-                    <div style={{ color: "red", textAlign: "center" }}>
-                      Error: {error}
-                    </div>
-                  )}
-                  <Container>
-                    <Row
-                      xs={1} // 1 column on extra small screens
-                      sm={2} // 2 columns on small screens
-                      md={3} // 3 columns on medium screens
-                      lg={4} // 4 columns on large screens
-                      xl={5} // 5 columns on extra large screens
-                      style={{
-                        justifyContent: "center", // Center items horizontally
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <>
+                <Container className="d-flex flex-column align-items-center">
+                  <InputGroup className="mb-3" style={{ maxWidth: "400px" }}>
+                    <FormControl
+                      placeholder="Search For Artist"
+                      type="input"
+                      aria-label="Search for an Artist"
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter") {
+                          handleSearch(1);
+                        }
                       }}
+                      onChange={(event) => setSearchInput(event.target.value)}
+                      style={{
+                        width: "300px",
+                        height: "35px",
+                        borderWidth: "0px",
+                        borderStyle: "solid",
+                        borderRadius: "5px",
+                        marginRight: "10px",
+                        paddingLeft: "10px",
+                      }}
+                    />
+                    <StyledButton 
+                      onClick={() => handleSearch(1)} 
+                      disabled={loading || !searchInput.trim()}
                     >
-                      {loading && searchInitiated ? (
-                        <div style={{ textAlign: "center", color: "black" }}>
-                          Loading...
-                        </div>
-                      ) : memoizedAlbums.length === 0 && !error && searchInitiated ? (
-                        <div style={{ textAlign: "center", color: "black" }}>
-                          No albums found.
-                        </div>
-                      ) : (
-                        memoizedAlbums.map((album) => (
-                          <Col key={album.id} style={{ marginBottom: "20px" }}>
-                            <AlbumCard album={album} />
-                          </Col>
-                        ))
-                      )}
-                    </Row>
-                    {totalPages > 1 && (
-                      <Row
-                        style={{
-                          justifyContent: "center",
-                          marginTop: "20px",
-                          marginBottom: "20px",
-                        }}
-                      >
+                      {loading ? "Searching..." : "Search"}
+                    </StyledButton>
+                  </InputGroup>
+                </Container>
+                {error && (
+                  <div style={{ color: "red", textAlign: "center" }}>
+                    Error: {error}
+                  </div>
+                )}
+                <Container>
+                  <Row
+                    xs={1}
+                    sm={2}
+                    md={3}
+                    lg={4}
+                    xl={5}
+                    className="g-4 justify-content-center"
+                  >
+                    {loading && searchInitiated ? (
+                      <div style={{ textAlign: "center", color: "black" }}>
+                        Loading...
+                      </div>
+                    ) : memoizedAlbums.length === 0 && !error && searchInitiated ? (
+                      <div style={{ textAlign: "center", color: "black" }}>
+                        No albums found.
+                      </div>
+                    ) : (
+                      memoizedAlbums.map((album) => (
+                        <Col key={album.id} style={{ marginBottom: "20px" }}>
+                          <AlbumCard album={album} />
+                        </Col>
+                      ))
+                    )}
+                  </Row>
+                  {totalPages > 1 && (
+                    <Row className="mt-4 mb-4">
+                      <Col className="d-flex justify-content-center align-items-center gap-3">
                         <StyledButton
                           onClick={() => handleSearch(currentPage - 1)}
                           disabled={currentPage === 1 || loading}
                           style={{
-                            marginRight: "10px",
                             fontSize: "14px",
                             width: "80px",
-                          }} // Reduced font size and width
+                          }}
                         >
                           Previous
                         </StyledButton>
-                        <span>
+                        <span className="mx-2">
                           Page {currentPage} of {totalPages}
                         </span>
                         <StyledButton
                           onClick={() => handleSearch(currentPage + 1)}
                           disabled={currentPage === totalPages || loading}
                           style={{
-                            marginLeft: "10px",
                             fontSize: "14px",
                             width: "80px",
-                          }} // Reduced font size and width
+                          }}
                         >
                           Next
                         </StyledButton>
-                      </Row>
-                    )}
-                  </Container>
-                </>
-              }
-            />
-            <Route
-              path="/album/:id"
-              element={
-                <Suspense fallback={<div>Loading album details...</div>}>
-                  <AlbumDetails />
-                </Suspense>
-              }
-            />
-          </Routes>
-        </Suspense>
+                      </Col>
+                    </Row>
+                  )}
+                </Container>
+              </>
+            }
+          />
+          <Route
+            path="/album/:id"
+            element={
+              <Suspense fallback={<div>Loading album details...</div>}>
+                <AlbumDetails />
+              </Suspense>
+            }
+          />
+        </Routes>
       </ErrorBoundary>
     </Router>
   );

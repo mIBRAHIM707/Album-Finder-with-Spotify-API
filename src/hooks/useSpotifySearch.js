@@ -13,7 +13,7 @@ export const useSpotifySearch = (accessToken) => {
     setError(null);
     setCurrentPage(page);
     try {
-      if (!searchInput) {
+      if (!searchInput.trim()) {
         setAlbums([]);
         setError("Please enter an artist to search for.");
         setLoading(false);
