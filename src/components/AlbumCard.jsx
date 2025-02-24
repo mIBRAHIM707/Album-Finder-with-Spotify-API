@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import LazyImage from './LazyImage';
 
 const AlbumCard = ({ album }) => {
   return (
@@ -16,9 +17,9 @@ const AlbumCard = ({ album }) => {
       }}
     >
       <Link to={`/album/${album.id}`}>
-        <Card.Img
-          variant="top"
+        <LazyImage
           src={album.images[0].url}
+          alt={album.name}
           style={{
             borderRadius: "4%",
             width: "100%",
@@ -78,4 +79,4 @@ AlbumCard.propTypes = {
   }).isRequired,
 };
 
-export default AlbumCard;
+export default React.memo(AlbumCard);
