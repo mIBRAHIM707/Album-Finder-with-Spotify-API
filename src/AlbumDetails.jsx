@@ -13,6 +13,7 @@ const AlbumDetails = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [artistAlbums, setArtistAlbums] = useState([]);
+  const [artistAlbumsWithMetrics, setArtistAlbumsWithMetrics] = useState([]);
   const accessToken = localStorage.getItem("accessToken"); // Retrieve access token
 
   const formatReleaseDate = (date) => {
@@ -54,7 +55,27 @@ const AlbumDetails = () => {
 
         if (!artistAlbumsResult.ok) throw new Error("Failed to fetch artist albums");
         const artistAlbumsData = await artistAlbumsResult.json();
-        setArtistAlbums(artistAlbumsData.items);
+
+        // Fetch detailed info for each album to get popularity
+        const detailedAlbums = await Promise.all(
+          artistAlbumsData.items.map(async (album) => {
+            const albumDetailResult = await fetch(
+              `https://api.spotify.com/v1/albums/${album.id}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                },
+              }
+            );
+            const albumDetail = await albumDetailResult.json();
+            return {
+              ...album,
+              popularity: albumDetail.popularity
+            };
+          })
+        );
+
+        setArtistAlbumsWithMetrics(detailedAlbums);
 
         // Fetch album tracks
         const tracksResult = await fetch(
@@ -157,7 +178,7 @@ const AlbumDetails = () => {
           <ArtistInfo artistId={album.artists[0].id} />
           
           {/* Artist Metrics */}
-          <ArtistMetrics albums={artistAlbums} />
+          <ArtistMetrics albums={artistAlbumsWithMetrics} />
           
           {/* Track List */}
           <h4 className="mb-3">Tracks</h4>
