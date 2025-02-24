@@ -72,113 +72,117 @@ function App() {
   return (
     <Router>
       <ErrorBoundary>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <>
-                <Container className="d-flex flex-column align-items-center">
-                  <InputGroup className="mb-3" style={{ maxWidth: "400px" }}>
-                    <FormControl
-                      placeholder="Search For Artist"
-                      type="input"
-                      aria-label="Search for an Artist"
-                      onKeyDown={(event) => {
-                        if (event.key === "Enter") {
-                          handleSearch(1);
-                        }
-                      }}
-                      onChange={(event) => setSearchInput(event.target.value)}
-                      style={{
-                        width: "300px",
-                        height: "35px",
-                        borderWidth: "0px",
-                        borderStyle: "solid",
-                        borderRadius: "5px",
-                        marginRight: "10px",
-                        paddingLeft: "10px",
-                      }}
-                    />
-                    <StyledButton 
-                      onClick={() => handleSearch(1)} 
-                      disabled={loading || !searchInput.trim()}
-                    >
-                      {loading ? "Searching..." : "Search"}
-                    </StyledButton>
-                  </InputGroup>
-                </Container>
-                {error && (
-                  <div style={{ color: "red", textAlign: "center" }}>
-                    Error: {error}
+        <div className="d-flex flex-column align-items-center w-100 min-vh-100 py-5">
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <>
+                  <div className="w-100" style={{ maxWidth: '600px', padding: '0 20px', marginBottom: '2rem' }}>
+                    <InputGroup>
+                      <FormControl
+                        placeholder="Search For Artist"
+                        type="input"
+                        aria-label="Search for an Artist"
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter") {
+                            handleSearch(1);
+                          }
+                        }}
+                        onChange={(event) => setSearchInput(event.target.value)}
+                        style={{
+                          height: "35px",
+                          borderWidth: "0px",
+                          borderStyle: "solid",
+                          borderRadius: "5px",
+                          marginRight: "10px",
+                          paddingLeft: "10px",
+                        }}
+                      />
+                      <StyledButton 
+                        onClick={() => handleSearch(1)} 
+                        disabled={loading || !searchInput.trim()}
+                      >
+                        {loading ? "Searching..." : "Search"}
+                      </StyledButton>
+                    </InputGroup>
                   </div>
-                )}
-                <Container>
-                  <Row
-                    xs={1}
-                    sm={2}
-                    md={3}
-                    lg={4}
-                    xl={5}
-                    className="g-4 justify-content-center"
-                  >
-                    {loading && searchInitiated ? (
-                      <div style={{ textAlign: "center", color: "black" }}>
-                        Loading...
-                      </div>
-                    ) : memoizedAlbums.length === 0 && !error && searchInitiated ? (
-                      <div style={{ textAlign: "center", color: "black" }}>
-                        No albums found.
-                      </div>
-                    ) : (
-                      memoizedAlbums.map((album) => (
-                        <Col key={album.id} style={{ marginBottom: "20px" }}>
-                          <AlbumCard album={album} />
-                        </Col>
-                      ))
-                    )}
-                  </Row>
-                  {totalPages > 1 && (
-                    <Row className="mt-4 mb-4">
-                      <Col className="d-flex justify-content-center align-items-center gap-3">
-                        <StyledButton
-                          onClick={() => handleSearch(currentPage - 1)}
-                          disabled={currentPage === 1 || loading}
-                          style={{
-                            fontSize: "14px",
-                            width: "80px",
-                          }}
-                        >
-                          Previous
-                        </StyledButton>
-                        <span className="mx-2">
-                          Page {currentPage} of {totalPages}
-                        </span>
-                        <StyledButton
-                          onClick={() => handleSearch(currentPage + 1)}
-                          disabled={currentPage === totalPages || loading}
-                          style={{
-                            fontSize: "14px",
-                            width: "80px",
-                          }}
-                        >
-                          Next
-                        </StyledButton>
-                      </Col>
-                    </Row>
+
+                  {error && (
+                    <div style={{ color: "red", textAlign: "center" }}>
+                      Error: {error}
+                    </div>
                   )}
-                </Container>
-              </>
-            }
-          />
-          <Route
-            path="/album/:id"
-            element={
-              <Suspense fallback={<div>Loading album details...</div>}>
-                <AlbumDetails />
-              </Suspense>
-            }
-          />
-        </Routes>
+
+                  <div className="w-100" style={{ maxWidth: '1400px' }}>
+                    <Row
+                      xs={1}
+                      sm={2}
+                      md={3}
+                      lg={4}
+                      xl={5}
+                      className="g-4 justify-content-center mx-0"
+                    >
+                      {loading && searchInitiated ? (
+                        <div style={{ textAlign: "center", color: "black" }}>
+                          Loading...
+                        </div>
+                      ) : memoizedAlbums.length === 0 && !error && searchInitiated ? (
+                        <div style={{ textAlign: "center", color: "black" }}>
+                          No albums found.
+                        </div>
+                      ) : (
+                        memoizedAlbums.map((album) => (
+                          <Col key={album.id} style={{ marginBottom: "20px" }}>
+                            <AlbumCard album={album} />
+                          </Col>
+                        ))
+                      )}
+                    </Row>
+
+                    {totalPages > 1 && (
+                      <Row className="mt-4 mb-4">
+                        <Col className="d-flex justify-content-center align-items-center gap-3">
+                          <StyledButton
+                            onClick={() => handleSearch(currentPage - 1)}
+                            disabled={currentPage === 1 || loading}
+                            style={{
+                              fontSize: "14px",
+                              width: "80px",
+                            }}
+                          >
+                            Previous
+                          </StyledButton>
+                          <span className="mx-2">
+                            Page {currentPage} of {totalPages}
+                          </span>
+                          <StyledButton
+                            onClick={() => handleSearch(currentPage + 1)}
+                            disabled={currentPage === totalPages || loading}
+                            style={{
+                              fontSize: "14px",
+                              width: "80px",
+                            }}
+                          >
+                            Next
+                          </StyledButton>
+                        </Col>
+                      </Row>
+                    )}
+                  </div>
+                </>
+              }
+            />
+            <Route
+              path="/album/:id"
+              element={
+                <Suspense fallback={<div>Loading album details...</div>}>
+                  <AlbumDetails />
+                </Suspense>
+              }
+            />
+          </Routes>
+        </div>
       </ErrorBoundary>
     </Router>
   );
