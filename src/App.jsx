@@ -130,16 +130,21 @@ function App() {
         <div className="min-vh-100 w-100 d-flex justify-content-center">
           <Container 
             fluid 
-            className="px-3 px-md-4 px-lg-5 py-5"
-            style={{ maxWidth: '1800px' }}
+            className="px-4 px-md-5 px-lg-6 py-5"
+            style={{ 
+              maxWidth: '1800px',
+              margin: '0 auto',
+              paddingLeft: 'calc(5% + 24px) !important',
+              paddingRight: 'calc(5% + 24px) !important'
+            }}
           >
             <Routes>
               <Route
                 path="/"
                 element={
-                  <div className="d-flex flex-column align-items-center">
+                  <div className="d-flex flex-column align-items-center" style={{ width: '100%' }}>
                     {/* Search Bar Section */}
-                    <div className="w-100 mb-4" style={{ maxWidth: '500px' }}>
+                    <div className="w-100 mb-4" style={{ maxWidth: '600px', margin: '0 auto' }}>
                       <EnhancedSearch 
                         onSearch={handleEnhancedSearch}
                         loading={loading}
@@ -180,7 +185,11 @@ function App() {
                     {error && <ErrorMessage message={error} />}
 
                     {/* Main Content Area */}
-                    <div className="w-100" style={{ maxWidth: '1400px' }}>
+                    <div className="w-100" style={{ 
+                      maxWidth: '1600px',
+                      margin: '0 auto',
+                      padding: '0 20px'
+                    }}>
                       <Row 
                         xs={1} 
                         sm={2} 

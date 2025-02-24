@@ -9,53 +9,43 @@ const AlbumCard = ({ album }) => {
     <Card className="album-card h-100">
       <Link 
         to={`/album/${album.id}`}
-        className="album-image-container"
+        style={{ textDecoration: 'none' }}
       >
-        <LazyImage
-          src={album.images[0].url}
-          alt={album.name}
-          className="album-image"
-        />
-        <div className="album-overlay">
-          <i className="fas fa-play-circle"></i>
+        <div className="position-relative">
+          <img
+            src={album.images[0].url}
+            alt={album.name}
+            className="card-img-top"
+            style={{
+              width: '100%',
+              aspectRatio: '1/1',
+              objectFit: 'cover',
+            }}
+          />
+          <div className="album-overlay">
+            <i className="fas fa-play-circle"></i>
+          </div>
         </div>
       </Link>
-      <Card.Body style={{ textAlign: "center", width: '100%' }}>
+      <Card.Body className="p-3 d-flex flex-column">
         <OverlayTrigger
           placement="top"
           overlay={<Tooltip id={`tooltip-${album.id}`}>{album.name}</Tooltip>}
         >
-          <Card.Title
-            style={{
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              fontWeight: "bold",
-              fontSize: "18px",
-              marginTop: "10px",
-              color: "black",
-              maxWidth: "180px",
-              cursor: 'pointer',
-            }}
-          >
+          <Card.Title className="album-title text-white mb-2">
             {album.name}
           </Card.Title>
         </OverlayTrigger>
-        <Card.Text style={{ color: "black" }}>
-          Release Date: <br /> {album.release_date}
+        <Card.Text className="text-muted small mb-3">
+          {new Date(album.release_date).getFullYear()}
         </Card.Text>
         <Button
           href={album.external_urls.spotify}
-          style={{
-            backgroundColor: "black",
-            color: "white",
-            fontWeight: "bold",
-            fontSize: "15px",
-            borderRadius: "5px",
-            padding: "10px",
-          }}
+          className="mt-auto spotify-button"
+          variant="dark"
+          size="sm"
         >
-          Album Link
+          Open in Spotify
         </Button>
       </Card.Body>
     </Card>

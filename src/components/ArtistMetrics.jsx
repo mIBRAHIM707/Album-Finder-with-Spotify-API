@@ -22,7 +22,12 @@ const ArtistMetrics = ({ albums }) => {
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-white p-2 border">
+        <div className="tooltip-custom" style={{ 
+          backgroundColor: '#232D3F', 
+          padding: '10px', 
+          border: '1px solid #005B41',
+          color: '#FFFFFF'
+        }}>
           <p className="mb-0">{payload[0].payload.fullName}</p>
           <p className="mb-0">Year: {payload[0].payload.year}</p>
           <p className="mb-0">Popularity: {payload[0].payload.popularity}</p>
@@ -32,27 +37,40 @@ const ArtistMetrics = ({ albums }) => {
     return null;
   };
 
+  const axisStyle = {
+    fontSize: '12px',
+    fill: '#FFFFFF',
+    fontFamily: 'Inter'
+  };
+
   return (
     <Card className="mb-4">
       <Card.Body>
         <h5 className="mb-4">Album Popularity Timeline</h5>
         <div style={{ width: '100%', height: 300 }}>
           <ResponsiveContainer>
-            <LineChart data={timelineData} margin={{ top: 5, right: 30, left: 20, bottom: 25 }}>
-              <CartesianGrid strokeDasharray="3 3" />
+            <LineChart data={timelineData} margin={{ top: 20, right: 30, left: 20, bottom: 45 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#404040" opacity={0.5} />
               <XAxis 
                 dataKey="year" 
-                angle={-45}
-                textAnchor="end"
+                angle={0}
+                interval={0}
+                tick={axisStyle}
+                padding={{ left: 20, right: 20 }}
               />
-              <YAxis domain={[0, 100]} />
+              <YAxis 
+                domain={[0, 100]} 
+                tick={axisStyle}
+                tickCount={6}
+              />
               <Tooltip content={<CustomTooltip />} />
               <Line 
                 type="monotone" 
                 dataKey="popularity" 
-                stroke="#8884d8"
+                stroke="#008170"
                 strokeWidth={2}
-                dot={{ r: 4 }}
+                dot={{ r: 4, fill: '#008170', strokeWidth: 0 }}
+                activeDot={{ r: 6, fill: '#005B41' }}
               />
             </LineChart>
           </ResponsiveContainer>
@@ -61,17 +79,28 @@ const ArtistMetrics = ({ albums }) => {
         <h5 className="mb-4 mt-5">Album Popularity Comparison</h5>
         <div style={{ width: '100%', height: 300 }}>
           <ResponsiveContainer>
-            <BarChart data={timelineData} margin={{ top: 5, right: 30, left: 20, bottom: 70 }}>
-              <CartesianGrid strokeDasharray="3 3" />
+            <BarChart data={timelineData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#404040" opacity={0.5} />
               <XAxis 
                 dataKey="name" 
-                angle={-45} 
-                textAnchor="end" 
-                height={100}
+                angle={-35}
+                textAnchor="end"
+                height={60}
+                tick={axisStyle}
+                interval={0}
+                padding={{ left: 10, right: 10 }}
               />
-              <YAxis domain={[0, 100]} />
+              <YAxis 
+                domain={[0, 100]} 
+                tick={axisStyle}
+                tickCount={6}
+              />
               <Tooltip content={<CustomTooltip />} />
-              <Bar dataKey="popularity" fill="#82ca9d" />
+              <Bar 
+                dataKey="popularity" 
+                fill="#008170"
+                radius={[4, 4, 0, 0]}
+              />
             </BarChart>
           </ResponsiveContainer>
         </div>

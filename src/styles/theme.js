@@ -1,9 +1,9 @@
 export const theme = {
   colors: {
-    primary: '#1DB954', // Spotify green
-    secondary: '#191414', // Spotify black
-    background: '#121212',
-    surface: '#282828',
+    background: '#0F0F0F',
+    surface: '#232D3F',
+    primary: '#008170',
+    secondary: '#005B41',
     text: '#FFFFFF',
     textSecondary: '#B3B3B3',
     error: '#FF4B4B',
