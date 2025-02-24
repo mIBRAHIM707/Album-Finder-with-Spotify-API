@@ -76,15 +76,19 @@ function App() {
   return (
     <Router>
       <ErrorBoundary>
-        <Container fluid className="d-flex flex-column align-items-center py-5">
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <Container className="p-0" style={{ maxWidth: '1400px' }}>
-                  {/* Search Bar Section */}
-                  <Row className="justify-content-center mb-4">
-                    <Col xs={12} sm={8} md={6} lg={5} xl={4}>
+        <div className="min-vh-100 w-100 d-flex justify-content-center">
+          <Container 
+            fluid 
+            className="px-3 px-md-4 px-lg-5 py-5"
+            style={{ maxWidth: '1800px' }}
+          >
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <div className="d-flex flex-column align-items-center">
+                    {/* Search Bar Section */}
+                    <div className="w-100 mb-4" style={{ maxWidth: '500px' }}>
                       <InputGroup>
                         <FormControl
                           placeholder="Search For Artist"
@@ -112,86 +116,88 @@ function App() {
                           {loading ? "Searching..." : "Search"}
                         </StyledButton>
                       </InputGroup>
-                    </Col>
-                  </Row>
+                    </div>
 
-                  {/* Error Message */}
-                  {error && <ErrorMessage message={error} />}
+                    {/* Error Message */}
+                    {error && <ErrorMessage message={error} />}
 
-                  {/* Albums Grid */}
-                  <Row 
-                    xs={1} 
-                    sm={2} 
-                    md={3} 
-                    lg={4} 
-                    xl={5} 
-                    className="g-4 justify-content-center"
-                  >
-                    {loading && searchInitiated ? (
-                      skeletons.map((_, index) => (
-                        <Col key={index}>
-                          <AlbumSkeleton />
-                        </Col>
-                      ))
-                    ) : memoizedAlbums.length === 0 && !error && searchInitiated ? (
-                      <Col xs={12} className="text-center py-5">
-                        <div className="w-100">
-                          <h4 className="mb-3">No albums found</h4>
-                          <p className="text-muted">Try searching for a different artist</p>
-                        </div>
-                      </Col>
-                    ) : (
-                      memoizedAlbums.map((album) => (
-                        <Col key={album.id}>
-                          <AlbumCard album={album} />
-                        </Col>
-                      ))
-                    )}
-                  </Row>
+                    {/* Main Content Area */}
+                    <div className="w-100" style={{ maxWidth: '1400px' }}>
+                      <Row 
+                        xs={1} 
+                        sm={2} 
+                        md={3} 
+                        lg={4} 
+                        xl={5} 
+                        className="g-4 justify-content-center mx-0"
+                      >
+                        {loading && searchInitiated ? (
+                          skeletons.map((_, index) => (
+                            <Col key={index}>
+                              <AlbumSkeleton />
+                            </Col>
+                          ))
+                        ) : memoizedAlbums.length === 0 && !error && searchInitiated ? (
+                          <Col xs={12} className="text-center py-5">
+                            <div className="w-100">
+                              <h4 className="mb-3">No albums found</h4>
+                              <p className="text-muted">Try searching for a different artist</p>
+                            </div>
+                          </Col>
+                        ) : (
+                          memoizedAlbums.map((album) => (
+                            <Col key={album.id}>
+                              <AlbumCard album={album} />
+                            </Col>
+                          ))
+                        )}
+                      </Row>
 
-                  {/* Pagination */}
-                  {totalPages > 1 && (
-                    <Row className="mt-4 mb-4">
-                      <Col className="d-flex justify-content-center align-items-center gap-3">
-                        <StyledButton
-                          onClick={() => handleSearch(currentPage - 1)}
-                          disabled={currentPage === 1 || loading}
-                          style={{
-                            fontSize: "14px",
-                            width: "80px",
-                          }}
-                        >
-                          Previous
-                        </StyledButton>
-                        <span className="mx-2">
-                          Page {currentPage} of {totalPages}
-                        </span>
-                        <StyledButton
-                          onClick={() => handleSearch(currentPage + 1)}
-                          disabled={currentPage === totalPages || loading}
-                          style={{
-                            fontSize: "14px",
-                            width: "80px",
-                          }}
-                        >
-                          Next
-                        </StyledButton>
-                      </Col>
-                    </Row>
-                  )}
-                </Container>
-              }
-            />
-            <Route
-              path="/album/:id"
-              element={
-                <Suspense fallback={<div>Loading album details...</div>}>
-                  <AlbumDetails />
-                </Suspense>
-              }
-            />
-          </Routes>
-        </Container>
+                      {/* Pagination */}
+                      {totalPages > 1 && (
+                        <Row className="mt-4 mb-4">
+                          <Col className="d-flex justify-content-center align-items-center gap-3">
+                            <StyledButton
+                              onClick={() => handleSearch(currentPage - 1)}
+                              disabled={currentPage === 1 || loading}
+                              style={{
+                                fontSize: "14px",
+                                width: "80px",
+                              }}
+                            >
+                              Previous
+                            </StyledButton>
+                            <span className="mx-2">
+                              Page {currentPage} of {totalPages}
+                            </span>
+                            <StyledButton
+                              onClick={() => handleSearch(currentPage + 1)}
+                              disabled={currentPage === totalPages || loading}
+                              style={{
+                                fontSize: "14px",
+                                width: "80px",
+                              }}
+                            >
+                              Next
+                            </StyledButton>
+                          </Col>
+                        </Row>
+                      )}
+                    </div>
+                  </div>
+                }
+              />
+              <Route
+                path="/album/:id"
+                element={
+                  <Suspense fallback={<div>Loading album details...</div>}>
+                    <AlbumDetails />
+                  </Suspense>
+                }
+              />
+            </Routes>
+          </Container>
+        </div>
       </ErrorBoundary>
     </Router>
   );
