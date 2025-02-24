@@ -5,6 +5,8 @@ import StyledButton from "./components/StyledButton";
 import ErrorBoundary from "./components/ErrorBoundary";
 import spotifyApi from './services/spotifyApi';
 import { useSpotifySearch } from "./hooks/useSpotifySearch";
+import AlbumSkeleton from "./components/AlbumSkeleton";
+import ErrorMessage from "./components/ErrorMessage";
 
 // Lazy load components
 const AlbumDetails = React.lazy(() => import("./AlbumDetails"));
@@ -69,6 +71,8 @@ function App() {
     getAccessToken();
   }, []);
 
+  const skeletons = Array(8).fill(null);
+
   return (
     <Router>
       <ErrorBoundary>
@@ -77,8 +81,8 @@ function App() {
             <Route
               path="/"
               element={
-                <>
-                  <div className="w-100" style={{ maxWidth: '600px', padding: '0 20px', marginBottom: '2rem' }}>
+                <div className="w-100 px-3 px-md-4 px-lg-5">
+                  <div className="mx-auto mb-4" style={{ maxWidth: '600px' }}>
                     <InputGroup>
                       <FormControl
                         placeholder="Search For Artist"
@@ -108,32 +112,31 @@ function App() {
                     </InputGroup>
                   </div>
 
-                  {error && (
-                    <div style={{ color: "red", textAlign: "center" }}>
-                      Error: {error}
-                    </div>
-                  )}
+                  {error && <ErrorMessage message={error} />}
 
-                  <div className="w-100" style={{ maxWidth: '1400px' }}>
-                    <Row
-                      xs={1}
-                      sm={2}
-                      md={3}
-                      lg={4}
-                      xl={5}
-                      className="g-4 justify-content-center mx-0"
+                  <div className="mx-auto" style={{ maxWidth: '1400px' }}>
+                    <Row 
+                      xs={1} 
+                      sm={2} 
+                      md={3} 
+                      lg={4} 
+                      xl={5} 
+                      className="g-4"
                     >
                       {loading && searchInitiated ? (
-                        <div style={{ textAlign: "center", color: "black" }}>
-                          Loading...
-                        </div>
+                        skeletons.map((_, index) => (
+                          <Col key={index}>
+                            <AlbumSkeleton />
+                          </Col>
+                        ))
                       ) : memoizedAlbums.length === 0 && !error && searchInitiated ? (
-                        <div style={{ textAlign: "center", color: "black" }}>
-                          No albums found.
-                        </div>
+                        <Col xs={12} className="text-center">
+                          <h4>No albums found</h4>
+                          <p>Try searching for a different artist</p>
+                        </Col>
                       ) : (
                         memoizedAlbums.map((album) => (
-                          <Col key={album.id} style={{ marginBottom: "20px" }}>
+                          <Col key={album.id}>
                             <AlbumCard album={album} />
                           </Col>
                         ))
@@ -170,7 +173,7 @@ function App() {
                       </Row>
                     )}
                   </div>
-                </>
+                </div>
               }
             />
             <Route

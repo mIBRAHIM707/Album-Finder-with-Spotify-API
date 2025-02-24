@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Button } from 'react-bootstrap';
+import { Card, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import LazyImage from './LazyImage';
@@ -14,6 +14,7 @@ const AlbumCard = ({ album }) => {
         flexDirection: "column",
         alignItems: "center",
         minWidth: "200px",
+        height: '100%',
       }}
     >
       <Link to={`/album/${album.id}`}>
@@ -27,21 +28,27 @@ const AlbumCard = ({ album }) => {
           }}
         />
       </Link>
-      <Card.Body style={{ textAlign: "center" }}>
-        <Card.Title
-          style={{
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            fontWeight: "bold",
-            fontSize: "18px",
-            marginTop: "10px",
-            color: "black",
-            maxWidth: "180px",
-          }}
+      <Card.Body style={{ textAlign: "center", width: '100%' }}>
+        <OverlayTrigger
+          placement="top"
+          overlay={<Tooltip id={`tooltip-${album.id}`}>{album.name}</Tooltip>}
         >
-          {album.name}
-        </Card.Title>
+          <Card.Title
+            style={{
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              fontWeight: "bold",
+              fontSize: "18px",
+              marginTop: "10px",
+              color: "black",
+              maxWidth: "180px",
+              cursor: 'pointer',
+            }}
+          >
+            {album.name}
+          </Card.Title>
+        </OverlayTrigger>
         <Card.Text style={{ color: "black" }}>
           Release Date: <br /> {album.release_date}
         </Card.Text>
