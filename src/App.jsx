@@ -76,104 +76,110 @@ function App() {
   return (
     <Router>
       <ErrorBoundary>
-        <div className="d-flex flex-column align-items-center w-100 min-vh-100 py-5">
+        <Container fluid className="d-flex flex-column align-items-center py-5">
           <Routes>
             <Route
               path="/"
               element={
-                <div className="w-100 px-3 px-md-4 px-lg-5">
-                  <div className="mx-auto mb-4" style={{ maxWidth: '600px' }}>
-                    <InputGroup>
-                      <FormControl
-                        placeholder="Search For Artist"
-                        type="input"
-                        aria-label="Search for an Artist"
-                        onKeyDown={(event) => {
-                          if (event.key === "Enter") {
-                            handleSearch(1);
-                          }
-                        }}
-                        onChange={(event) => setSearchInput(event.target.value)}
-                        style={{
-                          height: "35px",
-                          borderWidth: "0px",
-                          borderStyle: "solid",
-                          borderRadius: "5px",
-                          marginRight: "10px",
-                          paddingLeft: "10px",
-                        }}
-                      />
-                      <StyledButton 
-                        onClick={() => handleSearch(1)} 
-                        disabled={loading || !searchInput.trim()}
-                      >
-                        {loading ? "Searching..." : "Search"}
-                      </StyledButton>
-                    </InputGroup>
-                  </div>
+                <Container className="p-0" style={{ maxWidth: '1400px' }}>
+                  {/* Search Bar Section */}
+                  <Row className="justify-content-center mb-4">
+                    <Col xs={12} sm={8} md={6} lg={5} xl={4}>
+                      <InputGroup>
+                        <FormControl
+                          placeholder="Search For Artist"
+                          type="input"
+                          aria-label="Search for an Artist"
+                          onKeyDown={(event) => {
+                            if (event.key === "Enter") {
+                              handleSearch(1);
+                            }
+                          }}
+                          onChange={(event) => setSearchInput(event.target.value)}
+                          style={{
+                            height: "35px",
+                            borderWidth: "0px",
+                            borderStyle: "solid",
+                            borderRadius: "5px",
+                            marginRight: "10px",
+                            paddingLeft: "10px",
+                          }}
+                        />
+                        <StyledButton 
+                          onClick={() => handleSearch(1)} 
+                          disabled={loading || !searchInput.trim()}
+                        >
+                          {loading ? "Searching..." : "Search"}
+                        </StyledButton>
+                      </InputGroup>
+                    </Col>
+                  </Row>
 
+                  {/* Error Message */}
                   {error && <ErrorMessage message={error} />}
 
-                  <div className="mx-auto" style={{ maxWidth: '1400px' }}>
-                    <Row 
-                      xs={1} 
-                      sm={2} 
-                      md={3} 
-                      lg={4} 
-                      xl={5} 
-                      className="g-4"
-                    >
-                      {loading && searchInitiated ? (
-                        skeletons.map((_, index) => (
-                          <Col key={index}>
-                            <AlbumSkeleton />
-                          </Col>
-                        ))
-                      ) : memoizedAlbums.length === 0 && !error && searchInitiated ? (
-                        <Col xs={12} className="text-center">
-                          <h4>No albums found</h4>
-                          <p>Try searching for a different artist</p>
+                  {/* Albums Grid */}
+                  <Row 
+                    xs={1} 
+                    sm={2} 
+                    md={3} 
+                    lg={4} 
+                    xl={5} 
+                    className="g-4 justify-content-center"
+                  >
+                    {loading && searchInitiated ? (
+                      skeletons.map((_, index) => (
+                        <Col key={index}>
+                          <AlbumSkeleton />
                         </Col>
-                      ) : (
-                        memoizedAlbums.map((album) => (
-                          <Col key={album.id}>
-                            <AlbumCard album={album} />
-                          </Col>
-                        ))
-                      )}
-                    </Row>
-
-                    {totalPages > 1 && (
-                      <Row className="mt-4 mb-4">
-                        <Col className="d-flex justify-content-center align-items-center gap-3">
-                          <StyledButton
-                            onClick={() => handleSearch(currentPage - 1)}
-                            disabled={currentPage === 1 || loading}
-                            style={{
-                              fontSize: "14px",
-                              width: "80px",
-                            }}
-                          >
-                            Previous
-                          </StyledButton>
-                          <span className="mx-2">
-                            Page {currentPage} of {totalPages}
-                          </span>
-                          <StyledButton
-                            onClick={() => handleSearch(currentPage + 1)}
-                            disabled={currentPage === totalPages || loading}
-                            style={{
-                              fontSize: "14px",
-                              width: "80px",
-                            }}
-                          >
-                            Next
-                          </StyledButton>
+                      ))
+                    ) : memoizedAlbums.length === 0 && !error && searchInitiated ? (
+                      <Col xs={12} className="text-center py-5">
+                        <div className="w-100">
+                          <h4 className="mb-3">No albums found</h4>
+                          <p className="text-muted">Try searching for a different artist</p>
+                        </div>
+                      </Col>
+                    ) : (
+                      memoizedAlbums.map((album) => (
+                        <Col key={album.id}>
+                          <AlbumCard album={album} />
                         </Col>
-                      </Row>
+                      ))
                     )}
-                  </div>
-                </div>
+                  </Row>
+
+                  {/* Pagination */}
+                  {totalPages > 1 && (
+                    <Row className="mt-4 mb-4">
+                      <Col className="d-flex justify-content-center align-items-center gap-3">
+                        <StyledButton
+                          onClick={() => handleSearch(currentPage - 1)}
+                          disabled={currentPage === 1 || loading}
+                          style={{
+                            fontSize: "14px",
+                            width: "80px",
+                          }}
+                        >
+                          Previous
+                        </StyledButton>
+                        <span className="mx-2">
+                          Page {currentPage} of {totalPages}
+                        </span>
+                        <StyledButton
+                          onClick={() => handleSearch(currentPage + 1)}
+                          disabled={currentPage === totalPages || loading}
+                          style={{
+                            fontSize: "14px",
+                            width: "80px",
+                          }}
+                        >
+                          Next
+                        </StyledButton>
+                      </Col>
+                    </Row>
+                  )}
+                </Container>
               }
             />
             <Route
@@ -185,7 +191,7 @@ function App() {
               }
             />
           </Routes>
-        </div>
+        </Container>
       </ErrorBoundary>
     </Router>
   );
