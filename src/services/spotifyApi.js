@@ -40,7 +40,7 @@ class SpotifyService {
 
   async getAlbumDetails(albumId) {
     const response = await fetch(
-      `${BASE_URL}/albums/${albumId}`,
+      `${BASE_URL}/albums/${albumId}?market=US`,
       { headers: this.getHeaders() }
     );
     const data = await response.json();

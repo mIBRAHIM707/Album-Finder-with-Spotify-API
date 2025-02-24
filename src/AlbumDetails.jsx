@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Container, Row, Col, Image, ListGroup } from "react-bootstrap";
+import { Container, Row, Col, Image, Badge, ProgressBar } from "react-bootstrap";
+import TrackList from "./components/TrackList";
+import ArtistInfo from './components/ArtistInfo';
+import RelatedAlbums from './components/RelatedAlbums';
 
 const AlbumDetails = () => {
   const { id } = useParams();
@@ -9,6 +12,14 @@ const AlbumDetails = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const accessToken = localStorage.getItem("accessToken"); // Retrieve access token
+
+  const formatReleaseDate = (date) => {
+    return new Date(date).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
 
   useEffect(() => {
     const fetchAlbumDetails = async () => {
@@ -72,28 +83,75 @@ const AlbumDetails = () => {
   }
 
   return (
-    <Container>
+    <Container className="py-5">
       <Row>
         <Col md={4}>
-          <Image src={album.images[0].url} alt={album.name} fluid />
+          <Image src={album.images[0].url} alt={album.name} fluid className="shadow-sm" />
+          <div className="mt-3">
+            <h6 className="text-muted">Popularity</h6>
+            <ProgressBar 
+              now={album.popularity} 
+              label={`${album.popularity}%`}
+              variant="success"
+              className="mb-3"
+            />
+          </div>
+          <div className="mb-3">
+            {album.genres && album.genres.map(genre => (
+              <Badge 
+                bg="secondary" 
+                className="me-2 mb-2" 
+                key={genre}
+              >
+                {genre}
+              </Badge>
+            ))}
+          </div>
+          <Link to="/" className="btn btn-outline-primary">
+            Back to Search
+          </Link>
         </Col>
         <Col md={8}>
-          <h2>{album.name}</h2>
-          <p>
-            <strong>Artist:</strong> {album.artists.map((artist) => artist.name).join(", ")}
-          </p>
-          <p>
-            <strong>Release Date:</strong> {album.release_date}
-          </p>
-          <p>
-            <strong>Total Tracks:</strong> {album.total_tracks}
-          </p>
-          <ListGroup>
-            {tracks.map((track) => (
-              <ListGroup.Item key={track.id}>{track.name}</ListGroup.Item>
-            ))}
-          </ListGroup>
-          <Link to="/">Back to Search</Link>
+          <div className="mb-4">
+            <h2>{album.name}</h2>
+            <p className="text-muted">
+              by {album.artists.map((artist) => artist.name).join(", ")}
+            </p>
+            <div className="d-flex gap-4 mb-3">
+              <div>
+                <small className="text-muted d-block">Release Date</small>
+                <strong>{formatReleaseDate(album.release_date)}</strong>
+              </div>
+              <div>
+                <small className="text-muted d-block">Tracks</small>
+                <strong>{album.total_tracks}</strong>
+              </div>
+              {album.label && (
+                <div>
+                  <small className="text-muted d-block">Label</small>
+                  <strong>{album.label}</strong>
+                </div>
+              )}
+            </div>
+            {album.copyrights && (
+              <small className="text-muted d-block mt-2">
+                {album.copyrights[0]?.text}
+              </small>
+            )}
+          </div>
+          
+          {/* Artist Information */}
+          <ArtistInfo artistId={album.artists[0].id} />
+          
+          {/* Track List */}
+          <h4 className="mb-3">Tracks</h4>
+          <TrackList tracks={tracks} />
+          
+          {/* Related Albums */}
+          <RelatedAlbums 
+            artistId={album.artists[0].id}
+            currentAlbumId={album.id}
+          />
         </Col>
       </Row>
     </Container>
