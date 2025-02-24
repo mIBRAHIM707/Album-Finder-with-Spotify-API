@@ -57,6 +57,33 @@ class SpotifyService {
     if (!response.ok) throw new Error(data.error?.message || 'Failed to fetch album tracks');
     return data;
   }
+
+  async getSearchSuggestions(query, type = 'artist') {
+    if (!query.trim()) return [];
+    
+    const response = await fetch(
+      `${BASE_URL}/search?q=${query}&type=${type}&limit=5`,
+      { headers: this.getHeaders() }
+    );
+    const data = await response.json();
+    
+    if (!response.ok) throw new Error(data.error?.message || 'Failed to fetch suggestions');
+    
+    return type === 'artist' ? data.artists.items : data.albums.items;
+  }
+
+  async searchByType(query, type = 'artist', page = 1, limit = 20) {
+    const offset = (page - 1) * limit;
+    const response = await fetch(
+      `${BASE_URL}/search?q=${query}&type=${type}&limit=${limit}&offset=${offset}`,
+      { headers: this.getHeaders() }
+    );
+    const data = await response.json();
+    
+    if (!response.ok) throw new Error(data.error?.message || 'Failed to search');
+    
+    return type === 'artist' ? data.artists : data.albums;
+  }
 }
 
 export default new SpotifyService();

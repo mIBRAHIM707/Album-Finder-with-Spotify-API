@@ -9,6 +9,7 @@ import AlbumSkeleton from "./components/AlbumSkeleton";
 import ErrorMessage from "./components/ErrorMessage";
 import SearchFilters from "./components/SearchFilters";
 import { useSearchHistory } from "./hooks/useSearchHistory";
+import EnhancedSearch from './components/EnhancedSearch';
 
 // Lazy load components
 const AlbumDetails = React.lazy(() => import("./AlbumDetails"));
@@ -76,6 +77,19 @@ function App() {
     }));
   };
 
+  const handleHistoryClick = (term) => {
+    setSearchInput(term);
+    setSearchInitiated(true);
+    search(term, 1);
+  };
+
+  const handleEnhancedSearch = (searchTerm, searchType) => {
+    setSearchInput(searchTerm);
+    setSearchInitiated(true);
+    addToHistory(searchTerm);
+    search(searchTerm, searchType, 1);
+  };
+
   // Remove the debounce effect as we want manual search control
 
   useEffect(() => {
@@ -126,33 +140,10 @@ function App() {
                   <div className="d-flex flex-column align-items-center">
                     {/* Search Bar Section */}
                     <div className="w-100 mb-4" style={{ maxWidth: '500px' }}>
-                      <InputGroup className="mb-3">
-                        <FormControl
-                          placeholder="Search For Artist"
-                          type="input"
-                          aria-label="Search for an Artist"
-                          onKeyDown={(event) => {
-                            if (event.key === "Enter") {
-                              handleSearch(1);
-                            }
-                          }}
-                          onChange={(event) => setSearchInput(event.target.value)}
-                          style={{
-                            height: "35px",
-                            borderWidth: "0px",
-                            borderStyle: "solid",
-                            borderRadius: "5px",
-                            marginRight: "10px",
-                            paddingLeft: "10px",
-                          }}
-                        />
-                        <StyledButton 
-                          onClick={() => handleSearch(1)} 
-                          disabled={loading || !searchInput.trim()}
-                        >
-                          {loading ? "Searching..." : "Search"}
-                        </StyledButton>
-                      </InputGroup>
+                      <EnhancedSearch 
+                        onSearch={handleEnhancedSearch}
+                        loading={loading}
+                      />
                       
                       {/* Search History */}
                       {searchHistory.length > 0 && (
@@ -162,10 +153,7 @@ function App() {
                             <button
                               key={index}
                               className="btn btn-link btn-sm"
-                              onClick={() => {
-                                setSearchInput(term);
-                                search(term, 1);
-                              }}
+                              onClick={() => handleHistoryClick(term)}
                             >
                               {term}
                             </button>
