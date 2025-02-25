@@ -134,17 +134,17 @@ function App() {
             style={{ 
               maxWidth: '1800px',
               margin: '0 auto',
-              paddingLeft: 'calc(5% + 24px) !important',
-              paddingRight: 'calc(5% + 24px) !important'
+              paddingLeft: 'calc(var(--space-xl) + var(--space-md)) !important',
+              paddingRight: 'calc(var(--space-xl) + var(--space-md)) !important'
             }}
           >
             <Routes>
               <Route
                 path="/"
                 element={
-                  <div className="d-flex flex-column align-items-center" style={{ width: '100%' }}>
-                    {/* Search Bar Section */}
-                    <div className="w-100 mb-4" style={{ maxWidth: '600px', margin: '0 auto' }}>
+                  <div className="d-flex flex-column align-items-center fade-in" style={{ width: '100%' }}>
+                    {/* Search Section */}
+                    <div className="w-100 mb-standard" style={{ maxWidth: '600px', margin: '0 auto' }}>
                       <EnhancedSearch 
                         onSearch={handleEnhancedSearch}
                         loading={loading}
@@ -184,11 +184,11 @@ function App() {
                     {/* Error Message */}
                     {error && <ErrorMessage message={error} />}
 
-                    {/* Main Content Area */}
-                    <div className="w-100" style={{ 
+                    {/* Main Content Section */}
+                    <div className="w-100 section" style={{ 
                       maxWidth: '1600px',
                       margin: '0 auto',
-                      padding: '0 20px'
+                      padding: '0 var(--space-md)'
                     }}>
                       <Row 
                         xs={1} 

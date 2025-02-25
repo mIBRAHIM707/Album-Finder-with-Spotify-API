@@ -1,17 +1,293 @@
+:root {
+  /* Color Variables */
+  --color-background: #0F0F0F;
+  --color-surface: #232D3F;
+  --color-primary: #008170;
+  --color-secondary: #005B41;
+  --color-text: #FFFFFF;
+  --color-text-secondary: #B3B3B3;
+  --color-error: #FF4B4B;
+  
+  /* Spacing Variables */
+  --space-xs: 0.25rem;  /* 4px */
+  --space-sm: 0.5rem;   /* 8px */
+  --space-md: 1rem;     /* 16px */
+  --space-lg: 1.5rem;   /* 24px */
+  --space-xl: 2rem;     /* 32px */
+  --space-xxl: 3rem;    /* 48px */
+  
+  /* Animation Variables */
+  --transition-fast: all 0.15s ease;
+  --transition-default: all 0.3s ease;
+  --transition-slow: all 0.5s ease;
+  
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+}
+
+/* Base Styles */
 body {
-  background-color: #0F0F0F;
-  color: #FFFFFF;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Consistent Spacing System */
+.mb-standard {
+  margin-bottom: var(--space-md);
+}
+
+.mt-standard {
+  margin-top: var(--space-md);
+}
+
+.p-standard {
+  padding: var(--space-md);
+}
+
+.gap-standard {
+  gap: var(--space-md);
+}
+
+/* Card Styles */
 .card {
-  background-color: #232D3F !important;
+  background-color: var(--color-surface) !important;
+  border: none !important;
+  border-radius: var(--radius-md) !important;
+  transition: var(--transition-default) !important;
+  padding: 0 !important;
+  color: var(--color-text) !important;
+  margin-bottom: var(--space-md);
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+
+.card-body {
+  padding: var(--space-md) !important;
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: var(--color-text) !important;
+}
+
+/* Button Styles */
+.btn {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  transition: var(--transition-default) !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+.btn-primary {
+  background-color: var(--color-primary) !important;
+  border: none !important;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-secondary) !important;
+  transform: translateY(-2px);
+}
+
+.spotify-button {
+  width: 100%;
+  padding: var(--space-sm) !important;
+  font-size: 0.8rem !important;
+  background-color: var(--color-primary) !important;
+  border: none !important;
+  transition: var(--transition-default) !important;
+}
+
+.spotify-button:hover {
+  background-color: var(--color-secondary) !important;
+  transform: translateY(-2px);
+}
+
+.btn-link {
+  color: var(--color-primary) !important;
+  transition: var(--transition-fast) !important;
+}
+
+.btn-link:hover {
+  color: var(--color-secondary) !important;
+  text-decoration: underline !important;
+}
+
+/* Form Elements */
+.form-control {
+  background-color: var(--color-surface) !important;
+  border: 1px solid var(--color-secondary) !important;
+  color: var(--color-text) !important;
+  transition: var(--transition-default) !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+.form-control:focus {
+  background-color: var(--color-surface) !important;
+  color: var(--color-text) !important;
+  box-shadow: 0 0 0 0.2rem rgba(0, 91, 65, 0.25) !important;
+  border-color: var(--color-primary) !important;
+}
+
+.form-control::placeholder {
+  color: var(--color-text-secondary) !important;
+}
+
+/* Album Card Styles */
+.album-card {
+  overflow: hidden;
+  max-width: 100%;
+  min-height: 380px;
+  background-color: var(--color-surface);
+  border: none;
+  transition: var(--transition-default);
+  height: 100%;
+}
+
+.album-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(35, 45, 63, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: var(--transition-default);
+}
+
+.album-card:hover .album-overlay {
+  opacity: 1;
+}
+
+.album-image-container {
+  position: relative;
+  padding-top: 100%;
+  display: block;
+  overflow: hidden;
+}
+
+.album-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: var(--transition-default);
+}
+
+.album-image:hover {
+  transform: scale(1.05);
+}
+
+/* Text Styles */
+.text-muted {
+  color: var(--color-text-secondary) !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin-bottom: var(--space-md);
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* Dropdown Styles */
+.dropdown-item {
+  color: var(--color-text) !important;
+  background-color: var(--color-surface) !important;
+  transition: var(--transition-fast) !important;
+  padding: var(--space-sm) var(--space-md) !important;
+}
+
+.dropdown-item:hover {
+  background-color: var(--color-secondary) !important;
+  color: var(--color-text) !important;
+}
+
+/* List Group Styles */
+.list-group-item {
+  background-color: var(--color-background) !important;
+  color: var(--color-text) !important;
+  border-color: var(--color-surface) !important;
+  transition: var(--transition-fast) !important;
+  padding: var(--space-md) !important;
+}
+
+.list-group-item:hover {
+  background-color: var(--color-surface) !important;
+}
+
+/* Tooltips & Badges */
+.tooltip-inner {
+  background-color: var(--color-surface) !important;
+  color: var(--color-text) !important;
+  border: 1px solid var(--color-secondary) !important;
+  padding: var(--space-sm) var(--space-md) !important;
+}
+
+.badge {
+  padding: var(--space-xs) var(--space-sm) !important;
+  font-size: 0.85em !important;
+  margin-right: var (--space-xs) !important;
+  margin-bottom: var(--space-xs) !important;
+  transition: var(--transition-fast) !important;
+}
+
+.badge.bg-secondary {
+  background-color: var(--color-secondary) !important;
+  color: var(--color-text) !important;
+}
+
+.badge.bg-secondary:hover {
+  background-color: var(--color-primary) !important;
+}
+
+/* Animation standardization */
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes slideUp {
+  0% { transform: translateY(10px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+.fade-in {
+  animation: fadeIn var(--transition-default);
+}
+
+.slide-up {
+  animation: slideUp var(--transition-default);
+}
+
+/* Section spacing */
+.section {
+  margin-bottom: var(--space-xl);
+}
+
+.section-heading {
+  margin-bottom: var(--space-lg);
+}
+
+/* Rest of your existing styles with variables */
+.card {
+  background-color: var(--color-surface) !important;
   border: none !important;
   transition: transform 0.2s ease;
   padding: 0 !important; /* Override default card padding */
-  color: #FFFFFF !important;
+  color: var(--color-text) !important;
 }
 
 .card:hover {
@@ -19,38 +295,38 @@ body {
 }
 
 .btn-primary {
-  background-color: #008170 !important;
+  background-color: var(--color-primary) !important;
   border: none !important;
 }
 
 .btn-primary:hover {
-  background-color: #005B41 !important;
+  background-color: var(--color-secondary) !important;
 }
 
 .form-control {
-  background-color: #232D3F !important;
-  border: 1px solid #005B41 !important;
-  color: #FFFFFF !important;
+  background-color: var(--color-surface) !important;
+  border: 1px solid var(--color-secondary) !important;
+  color: var(--color-text) !important;
 }
 
 .form-control:focus {
-  background-color: #232D3F !important;
-  color: #FFFFFF !important;
+  background-color: var(--color-surface) !important;
+  color: var(--color-text) !important;
   box-shadow: 0 0 0 0.2rem rgba(0, 91, 65, 0.25) !important;
 }
 
 .form-control::placeholder {
-  color: #8A8A8A !important;
+  color: var(--color-text-secondary) !important;
 }
 
 .badge {
-  padding: 8px 12px !important;
+  padding: var(--space-xs) var(--space-sm) !important;
   font-size: 0.85em !important;
 }
 
 .badge.bg-secondary {
-  background-color: #005B41 !important;
-  color: #FFFFFF !important;
+  background-color: var(--color-secondary) !important;
+  color: var(--color-text) !important;
 }
 
 .navbar {
@@ -64,21 +340,21 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #0F0F0F;
+  background: var(--color-background);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #232D3F;
+  background: var(--color-surface);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #005B41;
+  background: var(--color-secondary);
 }
 
 /* Loading Animation */
 .loading-skeleton {
-  background: linear-gradient(90deg, #232D3F 25%, #005B41 50%, #232D3F 75%);
+  background: linear-gradient(90deg, var(--color-surface) 25%, var(--color-secondary) 50%, var(--color-surface) 75%);
   background-size: 200% 100%;
   animation: loading 1.5s infinite;
 }
@@ -98,7 +374,7 @@ body {
   max-width: 100%;
   height: auto !important;
   min-height: 380px; /* Increased from 360px */
-  background-color: #282828;
+  background-color: var(--color-surface);
   border: none;
   transition: transform 0.2s ease;
   height: 100%;
@@ -119,7 +395,7 @@ body {
 }
 
 .album-overlay i {
-  color: #008170;
+  color: var(--color-primary);
   font-size: 3rem;
 }
 
@@ -157,7 +433,7 @@ body {
   line-height: 1.2 !important;
   margin-bottom: 0.25rem !important;
   margin-top: 0;
-  color: #FFFFFF !important;
+  color: var(--color-text) !important;
   max-width: 100%;
   cursor: pointer;
   font-family: 'Inter', sans-serif;
@@ -166,20 +442,20 @@ body {
 
 .album-card small,
 .album-card .text-muted {
-  color: #B3B3B3 !important;
+  color: var(--color-text-secondary) !important;
 }
 
 .spotify-button {
   width: 100%;
   padding: 0.5rem !important;
   font-size: 0.8rem !important;
-  background-color: #008170 !important;
+  background-color: var(--color-primary) !important;
   border: none !important;
   transition: background-color 0.2s ease !important;
 }
 
 .spotify-button:hover {
-  background-color: #005B41 !important;
+  background-color: var(--color-secondary) !important;
 }
 
 .card-body {
@@ -188,7 +464,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  color: #FFFFFF !important;
+  color: var(--color-text) !important;
 }
 
 /* Ensure all images in cards are properly contained */
@@ -209,25 +485,25 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .text-muted {
-  color: #B3B3B3 !important;
+  color: var(--color-text-secondary) !important;
 }
 
 /* Text colors */
 .card-title, 
 .card-text, 
 .card-body {
-  color: #FFFFFF !important;
+  color: var(--color-text) !important;
 }
 
 /* Dropdown items */
 .dropdown-item {
-  color: #FFFFFF !important;
-  background-color: #232D3F !important;
+  color: var(--color-text) !important;
+  background-color: var(--color-surface) !important;
 }
 
 .dropdown-item:hover {
-  background-color: #005B41 !important;
-  color: #FFFFFF !important;
+  background-color: var(--color-secondary) !important;
+  color: var(--color-text) !important;
 }
 
 /* Chart text colors */
@@ -242,11 +518,11 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Search history buttons */
 .btn-link {
-  color: #008170 !important;
+  color: var(--color-primary) !important;
 }
 
 .btn-link:hover {
-  color: #005B41 !important;
+  color: var(--color-secondary) !important;
 }
 
 /* Chart colors */
@@ -255,25 +531,25 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .bg-white {
-  background-color: #232D3F !important;
-  color: #FFFFFF !important;
+  background-color: var(--color-surface) !important;
+  color: var(--color-text) !important;
 }
 
 /* Track list styles */
 .list-group-item {
-  background-color: #0F0F0F !important;
-  color: #FFFFFF !important;
-  border-color: #232D3F !important;
+  background-color: var(--color-background) !important;
+  color: var(--color-text) !important;
+  border-color: var(--color-surface) !important;
 }
 
 .list-group-item small {
-  color: #B3B3B3 !important;
+  color: var(--color-text-secondary) !important;
 }
 
 .list-group-item .btn-link {
-  color: #008170 !important;
+  color: var(--color-primary) !important;
 }
 
 .list-group-item .btn-link:hover {
-  color: #005B41 !important;
+  color: var(--color-secondary) !important;
 }
