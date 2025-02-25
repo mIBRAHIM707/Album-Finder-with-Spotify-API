@@ -572,3 +572,97 @@ h1, h2, h3, h4, h5, h6 {
 .text-start {
   text-align: left !important;
 }
+
+/* Loading animations and states */
+.loading-skeleton {
+  background: linear-gradient(90deg, 
+    var(--color-surface) 0%, 
+    rgba(0, 129, 112, 0.3) 50%, 
+    var(--color-surface) 100%);
+  background-size: 200% 100%;
+  animation: loading-wave 1.5s ease-in-out infinite;
+}
+
+@keyframes loading-wave {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.loading-fade {
+  animation: fade-in-out 2s infinite alternate;
+}
+
+@keyframes fade-in-out {
+  0% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+.loading-pulse {
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.95); opacity: 0.7; }
+  50% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.7; }
+}
+
+.loading-animation {
+  animation: spin-bounce 2s infinite;
+}
+
+@keyframes spin-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.loading-text {
+  animation: text-fade 2s infinite alternate;
+}
+
+@keyframes text-fade {
+  0% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+/* Skeleton styles */
+.skeleton-card {
+  transition: all 0.3s ease;
+}
+
+.skeleton-image {
+  height: 0;
+  padding-bottom: 100%;
+  width: 100%;
+  border-top-left-radius: var(--radius-md);
+  border-top-right-radius: var(--radius-md);
+}
+
+.skeleton-button {
+  height: 38px;
+  width: 100%;
+  margin-top: var(--space-md);
+}
+
+/* Page transition animations */
+.page-transition-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.page-transition-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s, transform 0.3s;
+}

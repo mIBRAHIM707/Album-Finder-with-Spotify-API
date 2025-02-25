@@ -3,16 +3,16 @@ import { Card, Placeholder } from 'react-bootstrap';
 
 const AlbumSkeleton = () => {
   return (
-    <Card style={{ width: '100%', minWidth: '200px', height: '350px' }}>
-      <Placeholder animation="glow">
-        <Placeholder xs={12} style={{ height: '200px', borderRadius: '4%' }} />
-      </Placeholder>
+    <Card className="album-card skeleton-card h-100">
+      <div className="skeleton-image loading-skeleton"></div>
       <Card.Body>
-        <Placeholder animation="glow">
-          <Placeholder xs={8} size="lg" className="mb-3" />
-          <Placeholder xs={6} className="mb-3" />
-          <Placeholder.Button variant="dark" xs={6} />
+        <Placeholder as={Card.Title} animation="wave">
+          <Placeholder xs={8} />
         </Placeholder>
+        <Placeholder as={Card.Text} animation="wave">
+          <Placeholder xs={6} />
+        </Placeholder>
+        <Placeholder.Button variant="primary" className="skeleton-button loading-skeleton" />
       </Card.Body>
     </Card>
   );

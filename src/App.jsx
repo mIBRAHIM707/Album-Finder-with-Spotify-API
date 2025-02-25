@@ -10,6 +10,7 @@ import ErrorMessage from "./components/ErrorMessage";
 import SearchFilters from "./components/SearchFilters";
 import { useSearchHistory } from "./hooks/useSearchHistory";
 import EnhancedSearch from './components/EnhancedSearch';
+import LoadingSpinner from './components/LoadingSpinner';
 
 // Lazy load components
 const AlbumDetails = React.lazy(() => import("./AlbumDetails"));
@@ -199,11 +200,16 @@ function App() {
                         className="g-4 justify-content-center mx-0"
                       >
                         {loading && searchInitiated ? (
-                          skeletons.map((_, index) => (
-                            <Col key={index}>
-                              <AlbumSkeleton />
+                          <>
+                            <Col xs={12} className="text-center mb-4">
+                              <div className="loading-text">Finding albums for "{searchInput}"</div>
                             </Col>
-                          ))
+                            {skeletons.map((_, index) => (
+                              <Col key={index}>
+                                <AlbumSkeleton />
+                              </Col>
+                            ))}
+                          </>
                         ) : filteredAlbums.length === 0 && !error && searchInitiated ? (
                           <Col xs={12} className="text-center py-5">
                             <div className="w-100">
@@ -251,7 +257,7 @@ function App() {
                         </Row>
                       )}
                     </div>
-                  </div>
+                  </div>m details..." />}>
                 }
               />
               <Route

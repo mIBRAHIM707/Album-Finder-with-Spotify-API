@@ -53,15 +53,18 @@ const ArtistMetrics = ({ albums }) => {
               <CartesianGrid strokeDasharray="3 3" stroke="#404040" opacity={0.5} />
               <XAxis 
                 dataKey="year" 
-                angle={0}
-                interval={0}
                 tick={chartTextStyle}
+                tickLine={{ stroke: '#FFFFFF' }}
+                axisLine={{ stroke: '#FFFFFF' }}
+                height={50}
                 padding={{ left: 20, right: 20 }}
               />
               <YAxis 
                 domain={[0, 100]} 
                 tick={chartTextStyle}
                 tickCount={6}
+                tickLine={{ stroke: '#FFFFFF' }}
+                axisLine={{ stroke: '#FFFFFF' }}
               />
               <Tooltip content={<CustomTooltip />} />
               <Line 
@@ -79,21 +82,24 @@ const ArtistMetrics = ({ albums }) => {
         <h5 className="mb-4 mt-5">Album Popularity Comparison</h5>
         <div style={{ width: '100%', height: 300 }}>
           <ResponsiveContainer>
-            <BarChart data={timelineData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
+            <BarChart data={timelineData} margin={{ top: 20, right: 30, left: 20, bottom: 100 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#404040" opacity={0.5} />
               <XAxis 
                 dataKey="name" 
-                angle={-35}
+                angle={-45}
                 textAnchor="end"
-                height={60}
+                height={80}
                 tick={chartTextStyle}
+                tickLine={{ stroke: '#FFFFFF' }}
+                axisLine={{ stroke: '#FFFFFF' }}
                 interval={0}
-                padding={{ left: 10, right: 10 }}
               />
               <YAxis 
                 domain={[0, 100]} 
                 tick={chartTextStyle}
                 tickCount={6}
+                tickLine={{ stroke: '#FFFFFF' }}
+                axisLine={{ stroke: '#FFFFFF' }}
               />
               <Tooltip content={<CustomTooltip />} />
               <Bar 

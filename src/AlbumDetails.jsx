@@ -5,6 +5,7 @@ import TrackList from "./components/TrackList";
 import ArtistInfo from './components/ArtistInfo';
 import RelatedAlbums from './components/RelatedAlbums';
 import ArtistMetrics from './components/ArtistMetrics';
+import LoadingSpinner from './components/LoadingSpinner';
 
 const AlbumDetails = () => {
   const { id } = useParams();
@@ -105,7 +106,7 @@ const AlbumDetails = () => {
   }, [id, accessToken]);
 
   if (loading) {
-    return <div style={{ textAlign: "center" }}>Loading album details...</div>;
+    return <LoadingSpinner message="Loading album details..." />;
   }
 
   if (error) {
