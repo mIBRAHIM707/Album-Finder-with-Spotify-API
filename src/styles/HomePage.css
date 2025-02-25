@@ -1,6 +1,24 @@
 .home-page {
   min-height: 100vh;
   background-color: var(--color-background);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.home-page section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.home-page .container {
+  max-width: 1200px;
+  margin: 0 auto;
   text-align: center;
 }
 
@@ -29,6 +47,7 @@
   justify-content: center;
   text-align: center;
   padding: 2rem 1.5rem;
+  margin: 0 auto;
 }
 
 .feature-card:hover {
@@ -74,4 +93,16 @@
 .card-title,
 .card-text {
   text-align: center;
+}
+
+/* Override any alignment issues */
+.row {
+  width: 100%;
+  margin: 0 !important;
+  justify-content: center !important;
+}
+
+.col {
+  display: flex;
+  justify-content: center;
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Suspense, useMemo } from "react";
-import { FormControl, InputGroup, Container, Row, Col } from "react-bootstrap";
+import { FormControl, InputGroup, Container, Row, Col, Button } from "react-bootstrap";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import StyledButton from "./components/StyledButton";
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -88,11 +88,18 @@ function App() {
   };
 
   const handleEnhancedSearch = (searchTerm, searchType) => {
+    if (!searchTerm.trim()) return;
+    
     setSearchInput(searchTerm);
     setSearchInitiated(true);
-    setShowResults(true);
+    setShowResults(true); // Make sure this is set to true
     addToHistory(searchTerm);
+    
+    // Make sure we're searching with the right parameters
     search(searchTerm, searchType, 1);
+    
+    // Log to help with debugging
+    console.log("Search initiated for:", searchTerm, searchType);
   };
 
   // Remove the debounce effect as we want manual search control
@@ -135,12 +142,9 @@ function App() {
         <div className="min-vh-100 w-100 d-flex justify-content-center">
           <Container 
             fluid 
-            className="px-4 px-md-5 px-lg-6 py-5"
+            className="p-0" // Remove padding to allow HomePage to have full width
             style={{ 
-              maxWidth: '1800px',
-              margin: '0 auto',
-              paddingLeft: 'calc(var(--space-xl) + var(--space-md)) !important',
-              paddingRight: 'calc(var(--space-xl) + var(--space-md)) !important'
+              maxWidth: '100%',
             }}
           >
             <Routes>

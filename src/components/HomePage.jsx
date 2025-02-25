@@ -4,6 +4,12 @@ import { Link } from 'react-router-dom';
 import EnhancedSearch from './EnhancedSearch';
 
 const HomePage = ({ onSearch, loading }) => {
+  // Add a direct search handler to debug
+  const handleSearchClick = (term) => {
+    console.log("HomePage search clicked for:", term);
+    onSearch(term, 'artist');
+  };
+
   return (
     <div className="home-page fade-in">
       {/* Hero Section */}
@@ -84,7 +90,7 @@ const HomePage = ({ onSearch, loading }) => {
                   key={artist} 
                   variant="outline-primary" 
                   className="mb-2"
-                  onClick={() => onSearch(artist, 'artist')}
+                  onClick={() => handleSearchClick(artist)}
                 >
                   {artist}
                 </Button>
