@@ -1,0 +1,77 @@
+.home-page {
+  min-height: 100vh;
+  background-color: var(--color-background);
+  text-align: center;
+}
+
+.hero-section {
+  padding-top: 80px;
+  padding-bottom: 80px;
+  text-align: center;
+}
+
+.feature-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  font-size: 2.5rem;
+  color: var(--color-primary);
+}
+
+.feature-card {
+  transition: transform 0.3s ease;
+  border: none;
+  background-color: var(--color-surface);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem 1.5rem;
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+}
+
+.bg-dark {
+  background-color: var(--color-surface) !important;
+}
+
+.getting-started-section {
+  background-color: rgba(0, 91, 65, 0.1);
+  padding: 60px 0;
+}
+
+.search-prompt .btn-outline-primary {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.search-prompt .btn-outline-primary:hover {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+/* Animation for the home page */
+.fade-in-up {
+  animation: fadeInUp 1s ease-out;
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Ensure all text is centered in cards */
+.card-title,
+.card-text {
+  text-align: center;
+}

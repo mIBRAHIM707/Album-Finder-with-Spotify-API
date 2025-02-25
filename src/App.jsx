@@ -11,6 +11,8 @@ import SearchFilters from "./components/SearchFilters";
 import { useSearchHistory } from "./hooks/useSearchHistory";
 import EnhancedSearch from './components/EnhancedSearch';
 import LoadingSpinner from './components/LoadingSpinner';
+import HomePage from './components/HomePage';
+import './styles/HomePage.css';
 
 // Lazy load components
 const AlbumDetails = React.lazy(() => import("./AlbumDetails"));
@@ -37,6 +39,7 @@ function App() {
     sortBy: 'recent'
   });
   const { searchHistory, addToHistory, clearHistory } = useSearchHistory();
+  const [showResults, setShowResults] = useState(false);
 
   // Memoize the filtered albums
   const memoizedAlbums = useMemo(() => albums, [albums]);
@@ -87,6 +90,7 @@ function App() {
   const handleEnhancedSearch = (searchTerm, searchType) => {
     setSearchInput(searchTerm);
     setSearchInitiated(true);
+    setShowResults(true);
     addToHistory(searchTerm);
     search(searchTerm, searchType, 1);
   };
@@ -143,127 +147,144 @@ function App() {
               <Route
                 path="/"
                 element={
-                  <div className="d-flex flex-column align-items-center fade-in" style={{ width: '100%' }}>
-                    {/* Search Section */}
-                    <div className="w-100 mb-standard" style={{ maxWidth: '600px', margin: '0 auto' }}>
-                      <EnhancedSearch 
-                        onSearch={handleEnhancedSearch}
-                        loading={loading}
-                      />
-                      
-                      {/* Search History */}
-                      {searchHistory.length > 0 && (
-                        <div className="mb-3">
-                          <small className="text-muted">Recent searches: </small>
-                          {searchHistory.map((term, index) => (
-                            <button
-                              key={index}
-                              className="btn btn-link btn-sm"
-                              onClick={() => handleHistoryClick(term)}
+                  <>
+                    {!showResults ? (
+                      <HomePage onSearch={handleEnhancedSearch} loading={loading} />
+                    ) : (
+                      <div className="d-flex flex-column align-items-center fade-in" style={{ width: '100%' }}>
+                        {/* Search Section */}
+                        <div className="w-100 mb-standard" style={{ maxWidth: '600px', margin: '0 auto' }}>
+                          <EnhancedSearch 
+                            onSearch={handleEnhancedSearch}
+                            loading={loading}
+                          />
+                          
+                          {/* Return to Home Button */}
+                          <div className="text-center mt-2">
+                            <Button 
+                              variant="link" 
+                              size="sm"
+                              onClick={() => setShowResults(false)}
                             >
-                              {term}
-                            </button>
-                          ))}
-                          <button
-                            className="btn btn-link btn-sm text-danger"
-                            onClick={clearHistory}
-                          >
-                            Clear
-                          </button>
-                        </div>
-                      )}
-
-                      {/* Filters */}
-                      {searchInitiated && (
-                        <SearchFilters
-                          filters={filters}
-                          onFilterChange={handleFilterChange}
-                        />
-                      )}
-                    </div>
-
-                    {/* Error Message */}
-                    {error && <ErrorMessage message={error} />}
-
-                    {/* Main Content Section */}
-                    <div className="w-100 section" style={{ 
-                      maxWidth: '1600px',
-                      margin: '0 auto',
-                      padding: '0 var(--space-md)'
-                    }}>
-                      <Row 
-                        xs={1} 
-                        sm={2} 
-                        md={3} 
-                        lg={4} 
-                        xl={5} 
-                        className="g-4 justify-content-center mx-0"
-                      >
-                        {loading && searchInitiated ? (
-                          <>
-                            <Col xs={12} className="text-center mb-4">
-                              <div className="loading-text">Finding albums for "{searchInput}"</div>
-                            </Col>
-                            {skeletons.map((_, index) => (
-                              <Col key={index}>
-                                <AlbumSkeleton />
-                              </Col>
-                            ))}
-                          </>
-                        ) : filteredAlbums.length === 0 && !error && searchInitiated ? (
-                          <Col xs={12} className="text-center py-5">
-                            <div className="w-100">
-                              <h4 className="mb-3">No albums found</h4>
-                              <p className="text-muted">Try searching for a different artist</p>
+                              <i className="fas fa-home"></i> Return to Home
+                            </Button>
+                          </div>
+                          
+                          {/* Search History */}
+                          {searchHistory.length > 0 && (
+                            <div className="mb-3">
+                              <small className="text-muted">Recent searches: </small>
+                              {searchHistory.map((term, index) => (
+                                <button
+                                  key={index}
+                                  className="btn btn-link btn-sm"
+                                  onClick={() => handleHistoryClick(term)}
+                                >
+                                  {term}
+                                </button>
+                              ))}
+                              <button
+                                className="btn btn-link btn-sm text-danger"
+                                onClick={clearHistory}
+                              >
+                                Clear
+                              </button>
                             </div>
-                          </Col>
-                        ) : (
-                          filteredAlbums.map((album) => (
-                            <Col key={album.id}>
-                              <AlbumCard album={album} />
-                            </Col>
-                          ))
-                        )}
-                      </Row>
+                          )}
 
-                      {/* Pagination */}
-                      {totalPages > 1 && (
-                        <Row className="mt-4 mb-4">
-                          <Col className="d-flex justify-content-center align-items-center gap-3">
-                            <StyledButton
-                              onClick={() => handleSearch(currentPage - 1)}
-                              disabled={currentPage === 1 || loading}
-                              style={{
-                                fontSize: "14px",
-                                width: "80px",
-                              }}
-                            >
-                              Previous
-                            </StyledButton>
-                            <span className="mx-2">
-                              Page {currentPage} of {totalPages}
-                            </span>
-                            <StyledButton
-                              onClick={() => handleSearch(currentPage + 1)}
-                              disabled={currentPage === totalPages || loading}
-                              style={{
-                                fontSize: "14px",
-                                width: "80px",
-                              }}
-                            >
-                              Next
-                            </StyledButton>
-                          </Col>
-                        </Row>
-                      )}
-                    </div>
-                  </div>m details..." />}>
+                          {/* Filters */}
+                          {searchInitiated && (
+                            <SearchFilters
+                              filters={filters}
+                              onFilterChange={handleFilterChange}
+                            />
+                          )}
+                        </div>
+
+                        {/* Error Message */}
+                        {error && <ErrorMessage message={error} />}
+
+                        {/* Main Content Section */}
+                        <div className="w-100 section" style={{ 
+                          maxWidth: '1600px',
+                          margin: '0 auto',
+                          padding: '0 var(--space-md)'
+                        }}>
+                          <Row 
+                            xs={1} 
+                            sm={2} 
+                            md={3} 
+                            lg={4} 
+                            xl={5} 
+                            className="g-4 justify-content-center mx-0"
+                          >
+                            {loading && searchInitiated ? (
+                              <>
+                                <Col xs={12} className="text-center mb-4">
+                                  <div className="loading-text">Finding albums for "{searchInput}"</div>
+                                </Col>
+                                {skeletons.map((_, index) => (
+                                  <Col key={index}>
+                                    <AlbumSkeleton />
+                                  </Col>
+                                ))}
+                              </>
+                            ) : filteredAlbums.length === 0 && !error && searchInitiated ? (
+                              <Col xs={12} className="text-center py-5">
+                                <div className="w-100">
+                                  <h4 className="mb-3">No albums found</h4>
+                                  <p className="text-muted">Try searching for a different artist</p>
+                                </div>
+                              </Col>
+                            ) : (
+                              filteredAlbums.map((album) => (
+                                <Col key={album.id}>
+                                  <AlbumCard album={album} />
+                                </Col>
+                              ))
+                            )}
+                          </Row>
+
+                          {/* Pagination */}
+                          {totalPages > 1 && (
+                            <Row className="mt-4 mb-4">
+                              <Col className="d-flex justify-content-center align-items-center gap-3">
+                                <StyledButton
+                                  onClick={() => handleSearch(currentPage - 1)}
+                                  disabled={currentPage === 1 || loading}
+                                  style={{
+                                    fontSize: "14px",
+                                    width: "80px",
+                                  }}
+                                >
+                                  Previous
+                                </StyledButton>
+                                <span className="mx-2">
+                                  Page {currentPage} of {totalPages}
+                                </span>
+                                <StyledButton
+                                  onClick={() => handleSearch(currentPage + 1)}
+                                  disabled={currentPage === totalPages || loading}
+                                  style={{
+                                    fontSize: "14px",
+                                    width: "80px",
+                                  }}
+                                >
+                                  Next
+                                </StyledButton>
+                              </Col>
+                            </Row>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </>
                 }
               />
               <Route
                 path="/album/:id"
                 element={
-                  <Suspense fallback={<div>Loading album details...</div>}>
+                  <Suspense fallback={<LoadingSpinner message="Loading album details..." />}>
                     <AlbumDetails />
                   </Suspense>
                 }
