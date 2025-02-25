@@ -553,3 +553,22 @@ h1, h2, h3, h4, h5, h6 {
 .list-group-item .btn-link:hover {
   color: var(--color-secondary) !important;
 }
+
+/* Fix for album card hover */
+.album-card .position-absolute {
+  pointer-events: none;
+}
+
+.album-card:hover .position-absolute {
+  opacity: 1 !important;
+}
+
+/* Chart text fix */
+.recharts-text {
+  fill: var(--color-text) !important;
+}
+
+/* Override for text alignment */
+.text-start {
+  text-align: left !important;
+}

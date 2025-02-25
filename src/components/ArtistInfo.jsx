@@ -26,7 +26,7 @@ const ArtistInfo = ({ artistId }) => {
 
   return (
     <Card className="mb-4">
-      <Card.Body className="d-flex align-items-center">
+      <Card.Body className="d-flex align-items-start text-start">
         <Image 
           src={artist.images[0]?.url} 
           roundedCircle 
@@ -34,15 +34,15 @@ const ArtistInfo = ({ artistId }) => {
           className="me-3"
         />
         <div>
-          <h5>{artist.name}</h5>
+          <h5 className="text-start">{artist.name}</h5>
           <div>
             <small className="text-muted">
               {artist.followers.total.toLocaleString()} followers
             </small>
           </div>
-          <div className="mt-2">
+          <div className="mt-2 d-flex flex-wrap">
             {artist.genres.map(genre => (
-              <span key={genre} className="badge bg-secondary me-1">
+              <span key={genre} className="badge bg-secondary me-1 mb-1">
                 {genre}
               </span>
             ))}

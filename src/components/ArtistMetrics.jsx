@@ -37,10 +37,10 @@ const ArtistMetrics = ({ albums }) => {
     return null;
   };
 
-  const axisStyle = {
-    fontSize: '12px',
+  const chartTextStyle = {
     fill: '#FFFFFF',
-    fontFamily: 'Inter'
+    fontSize: '12px',
+    fontFamily: 'Inter, sans-serif'
   };
 
   return (
@@ -55,12 +55,12 @@ const ArtistMetrics = ({ albums }) => {
                 dataKey="year" 
                 angle={0}
                 interval={0}
-                tick={axisStyle}
+                tick={chartTextStyle}
                 padding={{ left: 20, right: 20 }}
               />
               <YAxis 
                 domain={[0, 100]} 
-                tick={axisStyle}
+                tick={chartTextStyle}
                 tickCount={6}
               />
               <Tooltip content={<CustomTooltip />} />
@@ -86,13 +86,13 @@ const ArtistMetrics = ({ albums }) => {
                 angle={-35}
                 textAnchor="end"
                 height={60}
-                tick={axisStyle}
+                tick={chartTextStyle}
                 interval={0}
                 padding={{ left: 10, right: 10 }}
               />
               <YAxis 
                 domain={[0, 100]} 
-                tick={axisStyle}
+                tick={chartTextStyle}
                 tickCount={6}
               />
               <Tooltip content={<CustomTooltip />} />

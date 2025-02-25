@@ -9,22 +9,33 @@ const AlbumCard = ({ album }) => {
     <Card className="album-card h-100">
       <Link 
         to={`/album/${album.id}`}
+        className="position-relative d-block"
         style={{ textDecoration: 'none' }}
       >
-        <div className="position-relative">
-          <img
-            src={album.images[0].url}
-            alt={album.name}
-            className="card-img-top"
-            style={{
-              width: '100%',
-              aspectRatio: '1/1',
-              objectFit: 'cover',
-            }}
-          />
-          <div className="album-overlay">
-            <i className="fas fa-play-circle"></i>
-          </div>
+        <img
+          src={album.images[0].url}
+          alt={album.name}
+          className="card-img-top"
+          style={{
+            width: '100%',
+            aspectRatio: '1/1',
+            objectFit: 'cover',
+            display: 'block'
+          }}
+        />
+        <div 
+          className="position-absolute top-0 start-0 w-100 h-100"
+          style={{
+            background: 'rgba(35, 45, 63, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            opacity: '0',
+            transition: 'opacity 0.3s',
+            pointerEvents: 'none' // This stops it from interfering with click events
+          }}
+        >
+          <i className="fas fa-play-circle" style={{ color: 'var(--color-primary)', fontSize: '3rem' }}></i>
         </div>
       </Link>
       <Card.Body className="p-3 d-flex flex-column">
@@ -32,7 +43,7 @@ const AlbumCard = ({ album }) => {
           placement="top"
           overlay={<Tooltip id={`tooltip-${album.id}`}>{album.name}</Tooltip>}
         >
-          <Card.Title className="album-title text-white mb-2">
+          <Card.Title className="album-title text-white mb-2 text-truncate">
             {album.name}
           </Card.Title>
         </OverlayTrigger>
