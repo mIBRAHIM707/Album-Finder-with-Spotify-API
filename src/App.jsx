@@ -12,6 +12,7 @@ import Pagination from "./components/Pagination";
 import spotifyApi from "./services/spotifyApi";
 import styled from "styled-components";
 import Header from './components/Header';
+import CardSkeleton from './components/CardSkeleton';
 
 const clientId = import.meta.env.VITE_CLIENT_ID;
 const clientSecret = import.meta.env.VITE_CLIENT_SECRET;
@@ -128,7 +129,13 @@ function App() {
                 />
                 <ResultsContainer>
                   {loading ? (
-                    <LoadingSpinner message="Searching..." />
+                    <ResultsGrid xs={1} sm={2} md={3} lg={4} xl={5} className="g-4">
+                      {[...Array(8)].map((_, index) => (
+                        <Col key={index}>
+                          <CardSkeleton type={searchType} />
+                        </Col>
+                      ))}
+                    </ResultsGrid>
                   ) : error ? (
                     <ErrorMessage message={error} />
                   ) : searchResults.length === 0 ? (
