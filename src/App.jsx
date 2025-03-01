@@ -6,10 +6,33 @@ import AlbumDetails from "./AlbumDetails";
 import EnhancedSearch from "./components/EnhancedSearch";
 import AlbumCard from "./components/AlbumCard";
 import ArtistCard from "./components/ArtistCard";
+import LoadingSpinner from "./components/LoadingSpinner";
+import ErrorMessage from "./components/ErrorMessage";
+import Pagination from "./components/Pagination";
 import spotifyApi from "./services/spotifyApi";
+import styled from "styled-components";
 
 const clientId = import.meta.env.VITE_CLIENT_ID;
 const clientSecret = import.meta.env.VITE_CLIENT_SECRET;
+
+const AppContainer = styled.div`
+  min-height: 100vh;
+  padding: var(--space-md) 0;
+`;
+
+const ResultsContainer = styled.div`
+  margin-top: var(--space-lg);
+`;
+
+const ResultsGrid = styled(Row)`
+  margin: var(--space-lg) -12px;
+`;
+
+const NoResults = styled.div`
+  text-align: center;
+  color: var(--color-text-secondary);
+  padding: var(--space-xl) 0;
+`;
 
 function App() {
   const [accessToken, setAccessToken] = useState("");
@@ -76,34 +99,6 @@ function App() {
     }
   };
 
-  const renderResults = () => {
-    if (loading) {
-      return <div className="text-center">Loading...</div>;
-    }
-
-    if (error) {
-      return <div className="text-center text-danger">Error: {error}</div>;
-    }
-
-    if (!searchResults.length) {
-      return <div className="text-center">No results found.</div>;
-    }
-
-    return (
-      <Row xs={1} sm={2} md={3} lg={4} xl={5} className="g-4">
-        {searchResults.map((item) => (
-          <Col key={item.id}>
-            {searchType === 'album' ? (
-              <AlbumCard album={item} />
-            ) : (
-              <ArtistCard artist={item} onSelect={() => handleArtistSelect(item.id)} />
-            )}
-          </Col>
-        ))}
-      </Row>
-    );
-  };
-
   const handleArtistSelect = async (artistId) => {
     setLoading(true);
     try {
@@ -123,34 +118,45 @@ function App() {
         <Route
           path="/"
           element={
-            <Container>
-              <EnhancedSearch 
-                onSearch={handleSearch}
-                loading={loading}
-              />
-              {renderResults()}
-              {totalPages > 1 && (
-                <div className="d-flex justify-content-center gap-3 mt-4">
-                  <button
-                    className="btn btn-primary"
-                    disabled={currentPage === 1 || loading}
-                    onClick={() => handleSearch(currentQuery, searchType, currentPage - 1)}
-                  >
-                    Previous
-                  </button>
-                  <span className="align-self-center">
-                    Page {currentPage} of {totalPages}
-                  </span>
-                  <button
-                    className="btn btn-primary"
-                    disabled={currentPage === totalPages || loading}
-                    onClick={() => handleSearch(currentQuery, searchType, currentPage + 1)}
-                  >
-                    Next
-                  </button>
-                </div>
-              )}
-            </Container>
+            <AppContainer>
+              <Container>
+                <EnhancedSearch 
+                  onSearch={handleSearch}
+                  loading={loading}
+                />
+                <ResultsContainer>
+                  {loading ? (
+                    <LoadingSpinner message="Searching..." />
+                  ) : error ? (
+                    <ErrorMessage message={error} />
+                  ) : searchResults.length === 0 ? (
+                    <NoResults>No results found. Try searching for something else.</NoResults>
+                  ) : (
+                    <>
+                      <ResultsGrid xs={1} sm={2} md={3} lg={4} xl={5} className="g-4">
+                        {searchResults.map((item) => (
+                          <Col key={item.id}>
+                            {searchType === 'album' ? (
+                              <AlbumCard album={item} />
+                            ) : (
+                              <ArtistCard artist={item} onSelect={() => handleArtistSelect(item.id)} />
+                            )}
+                          </Col>
+                        ))}
+                      </ResultsGrid>
+                      {totalPages > 1 && (
+                        <Pagination
+                          currentPage={currentPage}
+                          totalPages={totalPages}
+                          onPageChange={(page) => handleSearch(currentQuery, searchType, page)}
+                          isLoading={loading}
+                        />
+                      )}
+                    </>
+                  )}
+                </ResultsContainer>
+              </Container>
+            </AppContainer>
           }
         />
         <Route path="/album/:id" element={<AlbumDetails />} />
