@@ -1,94 +1,119 @@
-// Change BASE_URL to use the proxy
-const BASE_URL = '/api';
+const SPOTIFY_API_BASE = 'https://api.spotify.com/v1';
 
-class SpotifyService {
+class SpotifyApi {
   constructor() {
-    this.accessToken = localStorage.getItem('accessToken');
+    this.baseUrl = SPOTIFY_API_BASE;
   }
 
-  setAccessToken(token) {
-    this.accessToken = token;
-    localStorage.setItem('accessToken', token);
+  getAccessToken() {
+    return localStorage.getItem('accessToken');
   }
 
-  getHeaders() {
-    const token = this.accessToken || localStorage.getItem('accessToken');
-    if (!token) {
-      throw new Error('No access token available');
-    }
-    return {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    };
-  }
-
-  async handleResponse(response, errorMessage) {
-    const data = await response.json();
-    if (!response.ok) {
-      console.error('API Error:', {
-        status: response.status,
-        statusText: response.statusText,
-        error: data.error
-      });
-      throw new Error(data.error?.message || errorMessage);
-    }
-    return data;
-  }
-
-  async searchArtist(searchInput) {
-    const response = await fetch(
-      `${BASE_URL}/search?q=${encodeURIComponent(searchInput)}&type=artist`,
-      { headers: this.getHeaders() }
-    );
-    return this.handleResponse(response, 'Failed to search artist');
-  }
-
-  async getArtistAlbums(artistId, page = 1, limit = 20) {
-    const offset = (page - 1) * limit;
-    const response = await fetch(
-      `${BASE_URL}/artists/${artistId}/albums?include_groups=album&market=US&limit=${limit}&offset=${offset}`,
-      { headers: this.getHeaders() }
-    );
-    return this.handleResponse(response, 'Failed to fetch albums');
-  }
-
-  async getAlbumDetails(albumId) {
-    const response = await fetch(
-      `${BASE_URL}/albums/${albumId}?market=US`,
-      { headers: this.getHeaders() }
-    );
-    return this.handleResponse(response, 'Failed to fetch album details');
-  }
-
-  async getAlbumTracks(albumId) {
-    const response = await fetch(
-      `${BASE_URL}/albums/${albumId}/tracks`,
-      { headers: this.getHeaders() }
-    );
-    return this.handleResponse(response, 'Failed to fetch album tracks');
-  }
-
-  async getSearchSuggestions(query, type = 'artist') {
-    if (!query.trim()) return [];
+  async search(query, type, page = 1) {
+    const offset = (page - 1) * 20; // 20 items per page
+    const searchType = type === 'artist' ? 'artist' : 'album';
     
-    const response = await fetch(
-      `${BASE_URL}/search?q=${query}&type=${type}&limit=5`,
-      { headers: this.getHeaders() }
-    );
-    const data = await this.handleResponse(response, 'Failed to fetch suggestions');
-    
-    return type === 'artist' ? data.artists.items : data.albums.items;
+    try {
+      const response = await fetch(
+        `${this.baseUrl}/search?q=${encodeURIComponent(query)}&type=${searchType}&offset=${offset}&limit=20`,
+        {
+          headers: {
+            Authorization: `Bearer ${this.getAccessToken()}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error?.message || 'Failed to fetch search results');
+      }
+
+      const data = await response.json();
+      const items = data[`${searchType}s`]?.items || [];
+      const total = data[`${searchType}s`]?.total || 0;
+
+      return {
+        items,
+        total,
+        offset,
+        limit: 20
+      };
+    } catch (error) {
+      console.error('Search error:', error);
+      throw new Error('Failed to search. Please try again later.');
+    }
   }
 
-  async searchByType(query, type = 'artist', page = 1, limit = 20) {
-    const offset = (page - 1) * limit;
-    const response = await fetch(
-      `${BASE_URL}/search?q=${encodeURIComponent(query)}&type=${type}&limit=${limit}&offset=${offset}`,
-      { headers: this.getHeaders() }
-    );
-    const data = await this.handleResponse(response, 'Failed to search');
-    return type === 'artist' ? data.artists : data.albums;
+  async getAlbum(albumId) {
+    try {
+      const response = await fetch(
+        `${this.baseUrl}/albums/${albumId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${this.getAccessToken()}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error?.message || 'Failed to fetch album details');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Get album error:', error);
+      throw new Error('Failed to fetch album details. Please try again later.');
+    }
+  }
+
+  async getArtist(artistId) {
+    try {
+      const response = await fetch(
+        `${this.baseUrl}/artists/${artistId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${this.getAccessToken()}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error?.message || 'Failed to fetch artist details');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Get artist error:', error);
+      throw new Error('Failed to fetch artist details. Please try again later.');
+    }
+  }
+
+  async getArtistAlbums(artistId) {
+    try {
+      const response = await fetch(
+        `${this.baseUrl}/artists/${artistId}/albums?include_groups=album,single&market=US&limit=50`,
+        {
+          headers: {
+            Authorization: `Bearer ${this.getAccessToken()}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error?.message || 'Failed to fetch artist albums');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Get artist albums error:', error);
+      throw new Error('Failed to fetch artist albums. Please try again later.');
+    }
   }
 }
 
-export default new SpotifyService();
+// Create and export a singleton instance
+const spotifyApi = new SpotifyApi();
+export default spotifyApi;

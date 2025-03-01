@@ -1,110 +1,175 @@
-import React from 'react';
-import { Container, Row, Col, Button, Card } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Container, Row, Col } from 'react-bootstrap';
+import styled from 'styled-components';
+import { BsSearch, BsSpotify, BsMusicNote } from 'react-icons/bs';
 import EnhancedSearch from './EnhancedSearch';
+import StyledButton from './StyledButton';
 
-const HomePage = ({ onSearch, loading }) => {
-  // Add a direct search handler to debug
-  const handleSearchClick = (term) => {
-    console.log("HomePage search clicked for:", term);
-    onSearch(term, 'artist');
-  };
+const HeroSection = styled.section`
+  padding: 120px 0 60px;
+  text-align: center;
+  background: linear-gradient(
+    180deg,
+    var(--color-background) 0%,
+    rgba(18, 18, 18, 0.9) 100%
+  );
+  position: relative;
+  overflow: hidden;
+`;
 
+const HeroTitle = styled.h1`
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: var(--color-text);
+  margin-bottom: var(--space-md);
+  background: linear-gradient(to right, var(--color-text) 0%, var(--color-primary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+`;
+
+const HeroSubtitle = styled.p`
+  font-size: 1.2rem;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-xl);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+`;
+
+const SearchContainer = styled.div`
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+`;
+
+const FeaturesSection = styled.section`
+  padding: var(--space-xl) 0;
+  background: var(--color-background);
+`;
+
+const FeatureCard = styled.div`
+  background: var(--color-card);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  height: 100%;
+  transition: var(--transition-default);
+  text-align: center;
+
+  &:hover {
+    transform: translateY(-8px);
+    background: var(--color-card-hover);
+    box-shadow: var(--shadow-lg);
+  }
+`;
+
+const FeatureIcon = styled.div`
+  width: 60px;
+  height: 60px;
+  background: var(--color-primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--space-md);
+  color: black;
+  font-size: 1.5rem;
+`;
+
+const FeatureTitle = styled.h3`
+  color: var(--color-text);
+  font-size: 1.25rem;
+  margin-bottom: var(--space-sm);
+`;
+
+const FeatureDescription = styled.p`
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  margin: 0;
+`;
+
+const BackgroundAnimation = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  z-index: 0;
+  opacity: 0.1;
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, var(--color-primary) 0%, transparent 50%);
+    animation: rotate 30s linear infinite;
+  }
+
+  @keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+`;
+
+const HomePage = () => {
   return (
-    <div className="home-page fade-in">
-      {/* Hero Section */}
-      <section className="hero-section text-center py-5">
-        <Container className="text-center">
-          <div className="mb-4">
-            <i className="fas fa-music" style={{ fontSize: '4rem', color: 'var(--color-primary)' }}></i>
-          </div>
-          <h1 className="display-4 fw-bold mb-3">Album Finder</h1>
-          <p className="lead text-muted mb-5">Discover albums from your favorite artists using the Spotify API</p>
-          
-          <Row className="justify-content-center">
-            <Col md={8} lg={6}>
-              <EnhancedSearch onSearch={onSearch} loading={loading} />
+    <>
+      <HeroSection>
+        <BackgroundAnimation />
+        <Container>
+          <HeroTitle>Discover Your Next Favorite Album</HeroTitle>
+          <HeroSubtitle>
+            Explore millions of albums and artists from Spotify's vast music library.
+            Search, discover, and dive deep into the world of music.
+          </HeroSubtitle>
+          <SearchContainer>
+            <EnhancedSearch />
+          </SearchContainer>
+        </Container>
+      </HeroSection>
+
+      <FeaturesSection>
+        <Container>
+          <Row xs={1} md={3} className="g-4">
+            <Col>
+              <FeatureCard>
+                <FeatureIcon>
+                  <BsSearch />
+                </FeatureIcon>
+                <FeatureTitle>Smart Search</FeatureTitle>
+                <FeatureDescription>
+                  Find albums and artists quickly with our intelligent search system powered by Spotify's API
+                </FeatureDescription>
+              </FeatureCard>
+            </Col>
+            <Col>
+              <FeatureCard>
+                <FeatureIcon>
+                  <BsSpotify />
+                </FeatureIcon>
+                <FeatureTitle>Spotify Integration</FeatureTitle>
+                <FeatureDescription>
+                  Seamlessly connect with Spotify to explore detailed album information and artist metrics
+                </FeatureDescription>
+              </FeatureCard>
+            </Col>
+            <Col>
+              <FeatureCard>
+                <FeatureIcon>
+                  <BsMusicNote />
+                </FeatureIcon>
+                <FeatureTitle>Track Preview</FeatureTitle>
+                <FeatureDescription>
+                  Listen to track previews and get a taste of the music before diving deeper
+                </FeatureDescription>
+              </FeatureCard>
             </Col>
           </Row>
         </Container>
-      </section>
-
-      {/* Features Section */}
-      <section className="features-section py-5 bg-dark text-center">
-        <Container className="text-center">
-          <h2 className="text-center mb-5">Features</h2>
-          <Row className="g-4 justify-content-center">
-            <Col md={4} className="d-flex">
-              <Card className="h-100 feature-card w-100 text-center">
-                <Card.Body className="d-flex flex-column align-items-center">
-                  <div className="feature-icon mb-3">
-                    <i className="fas fa-search"></i>
-                  </div>
-                  <Card.Title>Search by Artist or Album</Card.Title>
-                  <Card.Text>
-                    Find albums by artist name or search directly for specific album titles.
-                  </Card.Text>
-                </Card.Body>
-              </Card>
-            </Col>
-            <Col md={4} className="d-flex">
-              <Card className="h-100 feature-card w-100 text-center">
-                <Card.Body className="d-flex flex-column align-items-center">
-                  <div className="feature-icon mb-3">
-                    <i className="fas fa-chart-bar"></i>
-                  </div>
-                  <Card.Title>Visualize Popularity</Card.Title>
-                  <Card.Text>
-                    See how albums compare with interactive charts and statistics.
-                  </Card.Text>
-                </Card.Body>
-              </Card>
-            </Col>
-            <Col md={4} className="d-flex">
-              <Card className="h-100 feature-card w-100 text-center">
-                <Card.Body className="d-flex flex-column align-items-center">
-                  <div className="feature-icon mb-3">
-                    <i className="fas fa-headphones-alt"></i>
-                  </div>
-                  <Card.Title>Preview Tracks</Card.Title>
-                  <Card.Text>
-                    Listen to track previews and discover new music from your favorite artists.
-                  </Card.Text>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
-        </Container>
-      </section>
-
-      {/* Getting Started Section */}
-      <section className="getting-started-section py-5 text-center">
-        <Container className="text-center">
-          <h2 className="mb-4">Ready to start exploring?</h2>
-          <p className="mb-4">Type an artist or album name in the search bar and discover amazing music!</p>
-          <div className="search-prompt">
-            <p className="mb-3">Try searching for:</p>
-            <div className="d-flex justify-content-center flex-wrap gap-2">
-              {["Taylor Swift", "The Beatles", "Kendrick Lamar", "Daft Punk", "Adele"].map((artist) => (
-                <Button 
-                  key={artist} 
-                  variant="outline-primary" 
-                  className="mb-2"
-                  onClick={() => handleSearchClick(artist)}
-                >
-                  {artist}
-                </Button>
-              ))}
-            </div>
-          </div>
-        </Container>
-      </section>
-
-      {/* Footer */}
-      <footer className="text-center py-4 text-muted">
-        <small>Powered by Spotify API • Created with React</small>
-      </footer>
-    </div>
+      </FeaturesSection>
+    </>
   );
 };
 
