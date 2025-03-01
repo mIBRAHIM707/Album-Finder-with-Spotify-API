@@ -1,45 +1,90 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Card } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import spotifyApi from '../services/spotifyApi';
+import { Row, Col } from 'react-bootstrap';
+import AlbumCard from './AlbumCard';
+import styled from 'styled-components';
+
+const RelatedSection = styled.section`
+  margin-top: var(--space-xl);
+  padding-top: var(--space-xl);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+`;
+
+const SectionTitle = styled.h4`
+  color: var(--color-text);
+  margin-bottom: var(--space-lg);
+  font-weight: 700;
+`;
+
+const AlbumsGrid = styled(Row)`
+  margin: 0 -12px;
+  
+  > div {
+    padding: 12px;
+  }
+`;
+
+const NoRelatedAlbums = styled.p`
+  color: var(--color-text-secondary);
+  text-align: center;
+  padding: var(--space-lg) 0;
+`;
 
 const RelatedAlbums = ({ artistId, currentAlbumId }) => {
-  const [albums, setAlbums] = useState([]);
+  const [relatedAlbums, setRelatedAlbums] = useState([]);
+  const accessToken = localStorage.getItem('accessToken');
 
   useEffect(() => {
     const fetchRelatedAlbums = async () => {
       try {
-        const data = await spotifyApi.getArtistAlbums(artistId);
-        setAlbums(data.items.filter(album => album.id !== currentAlbumId).slice(0, 4));
+        const response = await fetch(
+          `https://api.spotify.com/v1/artists/${artistId}/albums?include_groups=album,single&market=US&limit=10`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        const data = await response.json();
+        
+        // Filter out the current album and duplicates
+        const filteredAlbums = data.items
+          .filter(album => album.id !== currentAlbumId)
+          .reduce((unique, album) => {
+            // Remove duplicate albums with same name (different versions)
+            const exists = unique.find(a => a.name.toLowerCase() === album.name.toLowerCase());
+            if (!exists) {
+              unique.push(album);
+            }
+            return unique;
+          }, [])
+          .slice(0, 5); // Limit to 5 albums
+
+        setRelatedAlbums(filteredAlbums);
       } catch (error) {
         console.error('Error fetching related albums:', error);
       }
     };
 
-    if (artistId) fetchRelatedAlbums();
-  }, [artistId, currentAlbumId]);
+    if (artistId && accessToken) {
+      fetchRelatedAlbums();
+    }
+  }, [artistId, currentAlbumId, accessToken]);
 
-  if (!albums.length) return null;
+  if (!relatedAlbums.length) {
+    return null;
+  }
 
   return (
-    <div className="mt-4">
-      <h4>More from this Artist</h4>
-      <Row xs={2} md={4} className="g-4">
-        {albums.map(album => (
-          <Col key={album.id}>
-            <Link to={`/album/${album.id}`} style={{ textDecoration: 'none' }}>
-              <Card>
-                <Card.Img variant="top" src={album.images[0].url} />
-                <Card.Body>
-                  <Card.Title className="text-truncate">{album.name}</Card.Title>
-                  <small className="text-muted">{album.release_date.split('-')[0]}</small>
-                </Card.Body>
-              </Card>
-            </Link>
+    <RelatedSection>
+      <SectionTitle>More from this Artist</SectionTitle>
+      <AlbumsGrid>
+        {relatedAlbums.map((album) => (
+          <Col key={album.id} xs={12} sm={6} md={4} lg={3}>
+            <AlbumCard album={album} />
           </Col>
         ))}
-      </Row>
-    </div>
+      </AlbumsGrid>
+    </RelatedSection>
   );
 };
 
