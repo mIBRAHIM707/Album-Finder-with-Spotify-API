@@ -1,11 +1,80 @@
 import React, { useState } from 'react';
 import { ListGroup, Button } from 'react-bootstrap';
-import { BsPlayFill, BsPauseFill } from 'react-icons/bs';
+import { BsPlayFill, BsPauseFill, BsExplicitFill } from 'react-icons/bs';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
+
+const TrackItem = styled(ListGroup.Item)`
+  background: transparent !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  transition: var(--transition-default);
+  padding: 0.75rem var(--space-md) !important;
+
+  &:hover {
+    background: var(--color-surface) !important;
+  }
+`;
+
+const PlayButton = styled(Button)`
+  color: var(--color-text) !important;
+  padding: 0 !important;
+  font-size: 1.5rem;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-default);
+
+  &:hover {
+    color: var(--color-primary) !important;
+    transform: scale(1.1);
+  }
+
+  &:focus {
+    box-shadow: none !important;
+  }
+`;
+
+const TrackInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+`;
+
+const TrackName = styled.div`
+  color: var(--color-text);
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const TrackMeta = styled.div`
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+const ExplicitBadge = styled.span`
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-text-secondary);
+  font-size: 1.2rem;
+`;
 
 const TrackList = ({ tracks }) => {
   const [playingTrack, setPlayingTrack] = useState(null);
   const [audio, setAudio] = useState(null);
+
+  const formatDuration = (ms) => {
+    const minutes = Math.floor(ms / 60000);
+    const seconds = Math.floor((ms % 60000) / 1000);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
 
   const handlePlay = (track) => {
     if (!track.preview_url) return;
@@ -32,38 +101,35 @@ const TrackList = ({ tracks }) => {
 
   return (
     <ListGroup variant="flush">
-      {tracks.map((track) => (
-        <ListGroup.Item 
+      {tracks.map((track, index) => (
+        <TrackItem 
           key={track.id}
-          className="d-flex justify-content-between align-items-center"
-          style={{ backgroundColor: 'transparent' }}
+          className="d-flex align-items-center gap-3"
         >
-          <div className="d-flex align-items-center flex-grow-1 text-start">
-            <div style={{ width: '40px', textAlign: 'center' }}>
-              {track.preview_url ? (
-                <Button
-                  variant="link"
-                  onClick={() => handlePlay(track)}
-                  className="p-0"
-                >
-                  {playingTrack === track.id ? <BsPauseFill /> : <BsPlayFill />}
-                </Button>
-              ) : (
-                <span className="text-muted small">♪</span>
-              )}
-            </div>
-            <div className="ms-3 flex-grow-1">
-              <div>{track.name}</div>
-              <small className="text-muted">
-                {Math.floor(track.duration_ms / 60000)}:
-                {String(Math.floor((track.duration_ms % 60000) / 1000)).padStart(2, '0')}
-              </small>
-            </div>
-            {track.explicit && (
-              <span className="badge bg-secondary ms-2">Explicit</span>
+          <div style={{ width: '40px', textAlign: 'center' }}>
+            {track.preview_url ? (
+              <PlayButton
+                variant="link"
+                onClick={() => handlePlay(track)}
+              >
+                {playingTrack === track.id ? <BsPauseFill /> : <BsPlayFill />}
+              </PlayButton>
+            ) : (
+              <span className="text-muted" style={{ fontSize: '1.5rem' }}>♪</span>
             )}
           </div>
-        </ListGroup.Item>
+          <TrackInfo className="flex-grow-1">
+            <TrackName>{track.name}</TrackName>
+            <TrackMeta>
+              <span>{formatDuration(track.duration_ms)}</span>
+              {track.explicit && (
+                <ExplicitBadge title="Explicit">
+                  <BsExplicitFill />
+                </ExplicitBadge>
+              )}
+            </TrackMeta>
+          </TrackInfo>
+        </TrackItem>
       ))}
     </ListGroup>
   );

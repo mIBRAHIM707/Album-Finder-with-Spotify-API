@@ -1,13 +1,33 @@
 import React, { useMemo } from 'react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, BarChart, Bar, CartesianGrid } from 'recharts';
 import { Card } from 'react-bootstrap';
+import styled from 'styled-components';
+
+const MetricsCard = styled(Card)`
+  background: var(--color-card);
+  margin-bottom: var(--space-lg);
+  box-shadow: var(--shadow-md);
+  border-radius: var(--radius-md);
+`;
+
+const ChartTitle = styled.h5`
+  color: var(--color-text);
+  margin-bottom: var(--space-md);
+  font-weight: 600;
+`;
+
+const ChartContainer = styled.div`
+  width: 100%;
+  height: 300px;
+  margin: var(--space-md) 0;
+`;
 
 const ArtistMetrics = ({ albums }) => {
   const timelineData = useMemo(() => {
     return albums
       .filter(album => album.popularity !== undefined)
       .map(album => ({
-        name: album.name.length > 15 ? album.name.substring(0, 15) + '...' : album.name,
+        name: album.name.length > 20 ? album.name.substring(0, 20) + '...' : album.name,
         fullName: album.name,
         year: new Date(album.release_date).getFullYear(),
         popularity: album.popularity
@@ -18,15 +38,26 @@ const ArtistMetrics = ({ albums }) => {
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
-        <div className="tooltip-custom" style={{ 
-          backgroundColor: '#232D3F', 
-          padding: '10px', 
-          border: '1px solid #005B41',
-          color: '#FFFFFF'
+        <div style={{ 
+          background: 'var(--color-surface)',
+          border: '1px solid var(--color-primary)',
+          padding: 'var(--space-sm)',
+          borderRadius: 'var(--radius-sm)',
+          boxShadow: 'var(--shadow-md)'
         }}>
-          <p className="mb-0">{payload[0].payload.fullName}</p>
-          <p className="mb-0">Year: {payload[0].payload.year}</p>
-          <p className="mb-0">Popularity: {payload[0].payload.popularity}</p>
+          <p style={{ 
+            margin: '0 0 4px', 
+            fontWeight: '600',
+            color: 'var(--color-text)'
+          }}>{payload[0].payload.fullName}</p>
+          <p style={{ 
+            margin: '0 0 4px',
+            color: 'var(--color-text-secondary)'
+          }}>Year: {payload[0].payload.year}</p>
+          <p style={{ 
+            margin: '0',
+            color: 'var(--color-primary)'
+          }}>Popularity: {payload[0].payload.popularity}%</p>
         </div>
       );
     }
@@ -37,84 +68,99 @@ const ArtistMetrics = ({ albums }) => {
     return null;
   }
 
-  const chartTextStyle = {
-    fill: '#FFFFFF',
-    fontSize: '12px',
-    fontFamily: 'Inter, sans-serif'
+  const chartCommonProps = {
+    stroke: 'var(--color-text-secondary)',
+    fontSize: 12,
+    fontFamily: 'Inter, sans-serif',
+    fill: 'var(--color-text-secondary)'
   };
 
   return (
-    <Card className="mb-4">
+    <MetricsCard>
       <Card.Body>
-        <h5 className="mb-4 text-start">Album Popularity Timeline</h5>
-        <div style={{ width: '100%', height: 300 }}>
+        <ChartTitle>Album Popularity Timeline</ChartTitle>
+        <ChartContainer>
           <ResponsiveContainer>
             <LineChart data={timelineData} margin={{ top: 20, right: 30, left: 20, bottom: 45 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#404040" opacity={0.5} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)" />
               <XAxis 
                 dataKey="year" 
-                tick={chartTextStyle}
-                tickLine={{ stroke: '#FFFFFF' }}
-                axisLine={{ stroke: '#FFFFFF' }}
-                height={50}
+                {...chartCommonProps}
+                height={60}
                 padding={{ left: 20, right: 20 }}
+                tick={{ textAnchor: 'middle' }}
               />
               <YAxis 
+                {...chartCommonProps}
                 domain={[0, 100]} 
-                tick={chartTextStyle}
                 tickCount={6}
-                tickLine={{ stroke: '#FFFFFF' }}
-                axisLine={{ stroke: '#FFFFFF' }}
-                label={{ value: 'Popularity', angle: -90, position: 'insideLeft', ...chartTextStyle }}
+                label={{ 
+                  value: 'Popularity', 
+                  angle: -90, 
+                  position: 'insideLeft',
+                  style: { ...chartCommonProps, fill: 'var(--color-text-secondary)' }
+                }}
               />
               <Tooltip content={<CustomTooltip />} />
               <Line 
                 type="monotone" 
                 dataKey="popularity" 
-                stroke="#008170"
+                stroke="var(--color-primary)"
                 strokeWidth={2}
-                dot={{ r: 4, fill: '#008170', strokeWidth: 0 }}
-                activeDot={{ r: 6, fill: '#005B41' }}
+                dot={{ r: 4, fill: 'var(--color-primary)', strokeWidth: 0 }}
+                activeDot={{ r: 6, fill: 'var(--color-primary-hover)' }}
               />
             </LineChart>
           </ResponsiveContainer>
-        </div>
+        </ChartContainer>
 
-        <h5 className="mb-4 mt-5 text-start">Album Popularity Comparison</h5>
-        <div style={{ width: '100%', height: 300 }}>
+        <ChartTitle style={{ marginTop: 'var(--space-xl)' }}>
+          Album Popularity Comparison
+        </ChartTitle>
+        <ChartContainer>
           <ResponsiveContainer>
-            <BarChart data={timelineData} margin={{ top: 20, right: 30, left: 20, bottom: 120 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#404040" opacity={0.5} />
+            <BarChart 
+              data={timelineData} 
+              margin={{ top: 20, right: 30, left: 20, bottom: 100 }}
+              barGap={8}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)" />
               <XAxis 
                 dataKey="name" 
+                {...chartCommonProps}
                 angle={-45}
                 textAnchor="end"
                 height={100}
-                tick={{ ...chartTextStyle, fontSize: '10px' }}
-                tickLine={{ stroke: '#FFFFFF' }}
-                axisLine={{ stroke: '#FFFFFF' }}
+                tick={{ 
+                  fontSize: 10,
+                  textAnchor: 'end',
+                  transform: 'translate(0, 8)'
+                }}
                 interval={0}
                 tickMargin={10}
               />
               <YAxis 
+                {...chartCommonProps}
                 domain={[0, 100]} 
-                tick={chartTextStyle}
                 tickCount={6}
-                tickLine={{ stroke: '#FFFFFF' }}
-                axisLine={{ stroke: '#FFFFFF' }}
-                label={{ value: 'Popularity', angle: -90, position: 'insideLeft', ...chartTextStyle }}
+                label={{ 
+                  value: 'Popularity', 
+                  angle: -90, 
+                  position: 'insideLeft',
+                  style: { ...chartCommonProps, fill: 'var(--color-text-secondary)' }
+                }}
               />
               <Tooltip content={<CustomTooltip />} />
               <Bar 
                 dataKey="popularity" 
-                fill="#008170"
+                fill="var(--color-primary)"
                 radius={[4, 4, 0, 0]}
               />
             </BarChart>
           </ResponsiveContainer>
-        </div>
+        </ChartContainer>
       </Card.Body>
-    </Card>
+    </MetricsCard>
   );
 };
 
