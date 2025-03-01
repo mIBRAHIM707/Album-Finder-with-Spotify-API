@@ -1,20 +1,24 @@
 :root {
-  /* Color Variables */
-  --color-background: #0F0F0F;
-  --color-surface: #232D3F;
-  --color-primary: #008170;
-  --color-secondary: #005B41;
+  /* Color Variables - Modern Spotify-inspired theme */
+  --color-background: #121212;
+  --color-surface: #282828;
+  --color-primary: #1DB954;    /* Spotify Green */
+  --color-primary-hover: #1ed760;
+  --color-secondary: #535353;
   --color-text: #FFFFFF;
   --color-text-secondary: #B3B3B3;
-  --color-error: #FF4B4B;
+  --color-error: #F15E6C;
+  --color-success: #1DB954;
+  --color-warning: #F7C948;
+  --color-card: #181818;
+  --color-card-hover: #282828;
   
   /* Spacing Variables */
-  --space-xs: 0.25rem;  /* 4px */
-  --space-sm: 0.5rem;   /* 8px */
-  --space-md: 1rem;     /* 16px */
-  --space-lg: 1.5rem;   /* 24px */
-  --space-xl: 2rem;     /* 32px */
-  --space-xxl: 3rem;    /* 48px */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
   
   /* Animation Variables */
   --transition-fast: all 0.15s ease;
@@ -25,15 +29,22 @@
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 16px;
+  --radius-pill: 500px;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
 /* Base Styles */
 body {
   background-color: var(--color-background);
   color: var(--color-text);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
 }
 
 /* Consistent Spacing System */
@@ -55,18 +66,20 @@ body {
 
 /* Card Styles */
 .card {
-  background-color: var(--color-surface) !important;
+  background-color: var(--color-card) !important;
   border: none !important;
   border-radius: var(--radius-md) !important;
   transition: var(--transition-default) !important;
+  overflow: hidden;
   padding: 0 !important;
   color: var(--color-text) !important;
   margin-bottom: var(--space-md);
 }
 
 .card:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-md);
+  background-color: var(--color-card-hover) !important;
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
 }
 
 .card-body {
@@ -81,19 +94,33 @@ body {
 /* Button Styles */
 .btn {
   font-family: 'Inter', sans-serif;
-  font-weight: 500;
+  font-weight: 600;
+  padding: 0.625rem 1.5rem;
+  border-radius: var(--radius-pill);
   transition: var(--transition-default) !important;
-  border-radius: var(--radius-sm) !important;
+  text-transform: capitalize;
+  letter-spacing: 0.3px;
 }
 
 .btn-primary {
   background-color: var(--color-primary) !important;
   border: none !important;
+  color: black !important;
 }
 
 .btn-primary:hover {
-  background-color: var(--color-secondary) !important;
-  transform: translateY(-2px);
+  background-color: var(--color-primary-hover) !important;
+  transform: scale(1.02);
+}
+
+.btn-outline-primary {
+  color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--color-primary) !important;
+  color: black !important;
 }
 
 .spotify-button {
@@ -125,19 +152,32 @@ body {
   background-color: var(--color-surface) !important;
   border: 1px solid var(--color-secondary) !important;
   color: var(--color-text) !important;
+  border-radius: var(--radius-pill) !important;
+  padding: 0.625rem 1.25rem !important;
   transition: var(--transition-default) !important;
-  border-radius: var(--radius-sm) !important;
 }
 
 .form-control:focus {
   background-color: var(--color-surface) !important;
-  color: var(--color-text) !important;
-  box-shadow: 0 0 0 0.2rem rgba(0, 91, 65, 0.25) !important;
   border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 2px rgba(29, 185, 84, 0.3) !important;
 }
 
 .form-control::placeholder {
   color: var(--color-text-secondary) !important;
+}
+
+.form-select {
+  background-color: var(--color-surface) !important;
+  color: var(--color-text) !important;
+  border-radius: var(--radius-pill) !important;
+  border: 1px solid var(--color-secondary) !important;
+  padding: 0.625rem 2.25rem 0.625rem 1.25rem !important;
+}
+
+.form-select:focus {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 2px rgba(29, 185, 84, 0.3) !important;
 }
 
 /* Album Card Styles */
@@ -217,10 +257,9 @@ h1, h2, h3, h4, h5, h6 {
 
 /* List Group Styles */
 .list-group-item {
-  background-color: var(--color-background) !important;
+  background-color: transparent !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
   color: var(--color-text) !important;
-  border-color: var(--color-surface) !important;
-  transition: var(--transition-fast) !important;
   padding: var(--space-md) !important;
 }
 
@@ -242,11 +281,14 @@ h1, h2, h3, h4, h5, h6 {
   margin-right: var (--space-xs) !important;
   margin-bottom: var(--space-xs) !important;
   transition: var(--transition-fast) !important;
+  font-weight: 500;
+  padding: 0.35em 0.85em;
+  border-radius: var(--radius-pill);
 }
 
 .badge.bg-secondary {
-  background-color: var(--color-secondary) !important;
-  color: var(--color-text) !important;
+  background-color: var(--color-surface) !important;
+  color: var(--color-text-secondary) !important;
 }
 
 .badge.bg-secondary:hover {
@@ -665,4 +707,150 @@ h1, h2, h3, h4, h5, h6 {
   opacity: 0;
   transform: translateY(20px);
   transition: opacity 0.3s, transform 0.3s;
+}
+
+/* Enhanced Button Styles */
+.btn {
+  font-weight: 600;
+  padding: 0.625rem 1.5rem;
+  border-radius: var(--radius-pill);
+  transition: var(--transition-default);
+  text-transform: capitalize;
+  letter-spacing: 0.3px;
+}
+
+.btn-primary {
+  background-color: var(--color-primary) !important;
+  border: none !important;
+  color: black !important;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-hover) !important;
+  transform: scale(1.02);
+}
+
+.btn-outline-primary {
+  color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--color-primary) !important;
+  color: black !important;
+}
+
+/* Enhanced Form Controls */
+.form-control {
+  background-color: var(--color-surface) !important;
+  border: 1px solid var(--color-secondary) !important;
+  color: var(--color-text) !important;
+  border-radius: var(--radius-pill) !important;
+  padding: 0.625rem 1.25rem !important;
+  transition: var(--transition-default) !important;
+}
+
+.form-control:focus {
+  background-color: var(--color-surface) !important;
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 2px rgba(29, 185, 84, 0.3) !important;
+}
+
+.form-select {
+  background-color: var(--color-surface) !important;
+  color: var(--color-text) !important;
+  border-radius: var(--radius-pill) !important;
+  border: 1px solid var(--color-secondary) !important;
+  padding: 0.625rem 2.25rem 0.625rem 1.25rem !important;
+}
+
+.form-select:focus {
+  border-color: var (--color-primary) !important;
+  box-shadow: 0 0 0 2px rgba(29, 185, 84, 0.3) !important;
+}
+
+/* Progress Bar */
+.progress {
+  background-color: var(--color-surface) !important;
+  border-radius: var(--radius-pill) !important;
+  height: 8px !important;
+}
+
+.progress-bar {
+  background-color: var(--color-primary) !important;
+  border-radius: var(--radius-pill) !important;
+}
+
+/* Input Group */
+.input-group {
+  border-radius: var(--radius-pill) !important;
+  overflow: hidden;
+}
+
+.input-group .form-control:first-child {
+  border-top-left-radius: var(--radius-pill) !important;
+  border-bottom-left-radius: var(--radius-pill) !important;
+}
+
+.input-group .btn:last-child {
+  border-top-right-radius: var(--radius-pill) !important;
+  border-bottom-right-radius: var(--radius-pill) !important;
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+  background-color: var(--color-surface) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+
+.dropdown-item {
+  color: var(--color-text) !important;
+  transition: var(--transition-fast) !important;
+}
+
+.dropdown-item:hover {
+  background-color: var(--color-card-hover) !important;
+}
+
+/* Tooltips */
+.tooltip-custom {
+  background-color: var(--color-surface) !important;
+  border: 1px solid var(--color-primary) !important;
+  border-radius: var(--radius-sm) !important;
+  padding: var(--space-sm) var(--space-md) !important;
+}
+
+/* Chart Styles */
+.recharts-text {
+  fill: var(--color-text-secondary) !important;
+}
+
+.recharts-cartesian-grid line {
+  stroke: rgba(255, 255, 255, 0.1) !important;
+}
+
+.recharts-cartesian-axis-line {
+  stroke: var(--color-text-secondary) !important;
+}
+
+/* Hover Effects */
+.hover-lift {
+  transition: var(--transition-default);
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+}
+
+/* Search Container */
+.search-container {
+  background: linear-gradient(180deg, 
+    var(--color-background) 0%,
+    rgba(18, 18, 18, 0.8) 100%
+  );
+  backdrop-filter: blur(10px);
+  padding: var(--space-lg) 0;
+  margin-bottom: var(--space-xl);
 }

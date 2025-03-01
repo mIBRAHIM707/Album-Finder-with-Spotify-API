@@ -36,30 +36,33 @@ const TrackList = ({ tracks }) => {
         <ListGroup.Item 
           key={track.id}
           className="d-flex justify-content-between align-items-center"
+          style={{ backgroundColor: 'transparent' }}
         >
-          <div className="d-flex align-items-center">
-            {track.preview_url ? (
-              <Button
-                variant="link"
-                onClick={() => handlePlay(track)}
-                className="me-2 p-0"
-              >
-                {playingTrack === track.id ? <BsPauseFill /> : <BsPlayFill />}
-              </Button>
-            ) : (
-              <span className="me-3 text-muted small">♪</span>
-            )}
-            <div>
+          <div className="d-flex align-items-center flex-grow-1 text-start">
+            <div style={{ width: '40px', textAlign: 'center' }}>
+              {track.preview_url ? (
+                <Button
+                  variant="link"
+                  onClick={() => handlePlay(track)}
+                  className="p-0"
+                >
+                  {playingTrack === track.id ? <BsPauseFill /> : <BsPlayFill />}
+                </Button>
+              ) : (
+                <span className="text-muted small">♪</span>
+              )}
+            </div>
+            <div className="ms-3 flex-grow-1">
               <div>{track.name}</div>
               <small className="text-muted">
                 {Math.floor(track.duration_ms / 60000)}:
                 {String(Math.floor((track.duration_ms % 60000) / 1000)).padStart(2, '0')}
               </small>
             </div>
+            {track.explicit && (
+              <span className="badge bg-secondary ms-2">Explicit</span>
+            )}
           </div>
-          {track.explicit && (
-            <span className="badge bg-secondary">Explicit</span>
-          )}
         </ListGroup.Item>
       ))}
     </ListGroup>

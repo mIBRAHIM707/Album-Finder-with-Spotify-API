@@ -1,108 +1,25 @@
-import React, { useState, useEffect, Suspense, useMemo } from "react";
-import { FormControl, InputGroup, Container, Row, Col, Button } from "react-bootstrap";
+import "./App.css";
+import { Container, Row, Col } from "react-bootstrap";
+import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import StyledButton from "./components/StyledButton";
-import ErrorBoundary from "./components/ErrorBoundary";
-import spotifyApi from './services/spotifyApi';
-import { useSpotifySearch } from "./hooks/useSpotifySearch";
-import AlbumSkeleton from "./components/AlbumSkeleton";
-import ErrorMessage from "./components/ErrorMessage";
-import SearchFilters from "./components/SearchFilters";
-import { useSearchHistory } from "./hooks/useSearchHistory";
-import EnhancedSearch from './components/EnhancedSearch';
-import LoadingSpinner from './components/LoadingSpinner';
-import HomePage from './components/HomePage';
-import './styles/HomePage.css';
-
-// Lazy load components
-const AlbumDetails = React.lazy(() => import("./AlbumDetails"));
-const AlbumCard = React.lazy(() => import("./components/AlbumCard"));
+import AlbumDetails from "./AlbumDetails";
+import EnhancedSearch from "./components/EnhancedSearch";
+import AlbumCard from "./components/AlbumCard";
+import ArtistCard from "./components/ArtistCard";
+import spotifyApi from "./services/spotifyApi";
 
 const clientId = import.meta.env.VITE_CLIENT_ID;
 const clientSecret = import.meta.env.VITE_CLIENT_SECRET;
 
 function App() {
-  const [searchInput, setSearchInput] = useState("");
   const [accessToken, setAccessToken] = useState("");
-  const {
-    albums,
-    error,
-    search,
-    loading,
-    currentPage,
-    totalPages,
-    setCurrentPage,
-  } = useSpotifySearch(accessToken); // Use the custom hook
-  const [searchInitiated, setSearchInitiated] = useState(false);
-  const [filters, setFilters] = useState({
-    year: '',
-    sortBy: 'recent'
-  });
-  const { searchHistory, addToHistory, clearHistory } = useSearchHistory();
-  const [showResults, setShowResults] = useState(false);
-
-  // Memoize the filtered albums
-  const memoizedAlbums = useMemo(() => albums, [albums]);
-
-  // Filter and sort albums
-  const filteredAlbums = useMemo(() => {
-    let result = [...memoizedAlbums];
-    
-    if (filters.year) {
-      result = result.filter(album => album.release_date.startsWith(filters.year));
-    }
-    
-    switch (filters.sortBy) {
-      case 'oldest':
-        result.sort((a, b) => a.release_date.localeCompare(b.release_date));
-        break;
-      case 'name':
-        result.sort((a, b) => a.name.localeCompare(b.name));
-        break;
-      default: // 'recent'
-        result.sort((a, b) => b.release_date.localeCompare(a.release_date));
-    }
-    
-    return result;
-  }, [memoizedAlbums, filters]);
-
-  // Remove the debounced search input since we want immediate search on button click
-  const handleSearch = (page = 1) => {
-    if (!searchInput.trim()) return;
-    setSearchInitiated(true);
-    addToHistory(searchInput);
-    search(searchInput, page);
-  };
-
-  const handleFilterChange = (filterName, value) => {
-    setFilters(prev => ({
-      ...prev,
-      [filterName]: value
-    }));
-  };
-
-  const handleHistoryClick = (term) => {
-    setSearchInput(term);
-    setSearchInitiated(true);
-    search(term, 1);
-  };
-
-  const handleEnhancedSearch = (searchTerm, searchType) => {
-    if (!searchTerm.trim()) return;
-    
-    setSearchInput(searchTerm);
-    setSearchInitiated(true);
-    setShowResults(true); // Make sure this is set to true
-    addToHistory(searchTerm);
-    
-    // Make sure we're searching with the right parameters
-    search(searchTerm, searchType, 1);
-    
-    // Log to help with debugging
-    console.log("Search initiated for:", searchTerm, searchType);
-  };
-
-  // Remove the debounce effect as we want manual search control
+  const [searchResults, setSearchResults] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [searchType, setSearchType] = useState('artist');
+  const [currentQuery, setCurrentQuery] = useState('');
 
   useEffect(() => {
     const getAccessToken = async () => {
@@ -115,188 +32,129 @@ function App() {
           body: `grant_type=client_credentials&client_id=${clientId}&client_secret=${clientSecret}`,
         };
 
-        const result = await fetch(
-          "https://accounts.spotify.com/api/token",
-          authParams
-        );
+        const result = await fetch("/api/token", authParams);
         const data = await result.json();
+        
         if (!result.ok) {
           throw new Error(data.error_description || "Failed to fetch access token");
         }
-        spotifyApi.setAccessToken(data.access_token);
+        
+        console.log("Token received successfully");
         setAccessToken(data.access_token);
+        spotifyApi.setAccessToken(data.access_token);
+        localStorage.setItem("accessToken", data.access_token);
       } catch (err) {
+        console.error("Token fetch error:", err);
         setError(err.message);
-        console.error("Error fetching access token:", err);
       }
     };
 
     getAccessToken();
   }, []);
 
-  const skeletons = Array(8).fill(null);
+  const handleSearch = async (query, type, page = 1) => {
+    if (!query?.trim()) return;
+    
+    setLoading(true);
+    setError(null);
+    setSearchType(type);
+    setCurrentQuery(query);
+    
+    try {
+      const results = await spotifyApi.searchByType(query, type, page);
+      console.log('Search results:', results);
+      
+      setSearchResults(results.items || []);
+      setTotalPages(Math.ceil((results.total || 0) / 20));
+      setCurrentPage(page);
+    } catch (err) {
+      console.error('Search error:', err);
+      setError(err.message);
+      setSearchResults([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const renderResults = () => {
+    if (loading) {
+      return <div className="text-center">Loading...</div>;
+    }
+
+    if (error) {
+      return <div className="text-center text-danger">Error: {error}</div>;
+    }
+
+    if (!searchResults.length) {
+      return <div className="text-center">No results found.</div>;
+    }
+
+    return (
+      <Row xs={1} sm={2} md={3} lg={4} xl={5} className="g-4">
+        {searchResults.map((item) => (
+          <Col key={item.id}>
+            {searchType === 'album' ? (
+              <AlbumCard album={item} />
+            ) : (
+              <ArtistCard artist={item} onSelect={() => handleArtistSelect(item.id)} />
+            )}
+          </Col>
+        ))}
+      </Row>
+    );
+  };
+
+  const handleArtistSelect = async (artistId) => {
+    setLoading(true);
+    try {
+      const albumsData = await spotifyApi.getArtistAlbums(artistId);
+      setSearchResults(albumsData.items);
+      setSearchType('album');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Router>
-      <ErrorBoundary>
-        <div className="min-vh-100 w-100 d-flex justify-content-center">
-          <Container 
-            fluid 
-            className="p-0" // Remove padding to allow HomePage to have full width
-            style={{ 
-              maxWidth: '100%',
-            }}
-          >
-            <Routes>
-              <Route
-                path="/"
-                element={
-                  <>
-                    {!showResults ? (
-                      <HomePage onSearch={handleEnhancedSearch} loading={loading} />
-                    ) : (
-                      <div className="d-flex flex-column align-items-center fade-in" style={{ width: '100%' }}>
-                        {/* Search Section */}
-                        <div className="w-100 mb-standard" style={{ maxWidth: '600px', margin: '0 auto' }}>
-                          <EnhancedSearch 
-                            onSearch={handleEnhancedSearch}
-                            loading={loading}
-                          />
-                          
-                          {/* Return to Home Button */}
-                          <div className="text-center mt-2">
-                            <Button 
-                              variant="link" 
-                              size="sm"
-                              onClick={() => setShowResults(false)}
-                            >
-                              <i className="fas fa-home"></i> Return to Home
-                            </Button>
-                          </div>
-                          
-                          {/* Search History */}
-                          {searchHistory.length > 0 && (
-                            <div className="mb-3">
-                              <small className="text-muted">Recent searches: </small>
-                              {searchHistory.map((term, index) => (
-                                <button
-                                  key={index}
-                                  className="btn btn-link btn-sm"
-                                  onClick={() => handleHistoryClick(term)}
-                                >
-                                  {term}
-                                </button>
-                              ))}
-                              <button
-                                className="btn btn-link btn-sm text-danger"
-                                onClick={clearHistory}
-                              >
-                                Clear
-                              </button>
-                            </div>
-                          )}
-
-                          {/* Filters */}
-                          {searchInitiated && (
-                            <SearchFilters
-                              filters={filters}
-                              onFilterChange={handleFilterChange}
-                            />
-                          )}
-                        </div>
-
-                        {/* Error Message */}
-                        {error && <ErrorMessage message={error} />}
-
-                        {/* Main Content Section */}
-                        <div className="w-100 section" style={{ 
-                          maxWidth: '1600px',
-                          margin: '0 auto',
-                          padding: '0 var(--space-md)'
-                        }}>
-                          <Row 
-                            xs={1} 
-                            sm={2} 
-                            md={3} 
-                            lg={4} 
-                            xl={5} 
-                            className="g-4 justify-content-center mx-0"
-                          >
-                            {loading && searchInitiated ? (
-                              <>
-                                <Col xs={12} className="text-center mb-4">
-                                  <div className="loading-text">Finding albums for "{searchInput}"</div>
-                                </Col>
-                                {skeletons.map((_, index) => (
-                                  <Col key={index}>
-                                    <AlbumSkeleton />
-                                  </Col>
-                                ))}
-                              </>
-                            ) : filteredAlbums.length === 0 && !error && searchInitiated ? (
-                              <Col xs={12} className="text-center py-5">
-                                <div className="w-100">
-                                  <h4 className="mb-3">No albums found</h4>
-                                  <p className="text-muted">Try searching for a different artist</p>
-                                </div>
-                              </Col>
-                            ) : (
-                              filteredAlbums.map((album) => (
-                                <Col key={album.id}>
-                                  <AlbumCard album={album} />
-                                </Col>
-                              ))
-                            )}
-                          </Row>
-
-                          {/* Pagination */}
-                          {totalPages > 1 && (
-                            <Row className="mt-4 mb-4">
-                              <Col className="d-flex justify-content-center align-items-center gap-3">
-                                <StyledButton
-                                  onClick={() => handleSearch(currentPage - 1)}
-                                  disabled={currentPage === 1 || loading}
-                                  style={{
-                                    fontSize: "14px",
-                                    width: "80px",
-                                  }}
-                                >
-                                  Previous
-                                </StyledButton>
-                                <span className="mx-2">
-                                  Page {currentPage} of {totalPages}
-                                </span>
-                                <StyledButton
-                                  onClick={() => handleSearch(currentPage + 1)}
-                                  disabled={currentPage === totalPages || loading}
-                                  style={{
-                                    fontSize: "14px",
-                                    width: "80px",
-                                  }}
-                                >
-                                  Next
-                                </StyledButton>
-                              </Col>
-                            </Row>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </>
-                }
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <Container>
+              <EnhancedSearch 
+                onSearch={handleSearch}
+                loading={loading}
               />
-              <Route
-                path="/album/:id"
-                element={
-                  <Suspense fallback={<LoadingSpinner message="Loading album details..." />}>
-                    <AlbumDetails />
-                  </Suspense>
-                }
-              />
-            </Routes>
-          </Container>
-        </div>
-      </ErrorBoundary>
+              {renderResults()}
+              {totalPages > 1 && (
+                <div className="d-flex justify-content-center gap-3 mt-4">
+                  <button
+                    className="btn btn-primary"
+                    disabled={currentPage === 1 || loading}
+                    onClick={() => handleSearch(currentQuery, searchType, currentPage - 1)}
+                  >
+                    Previous
+                  </button>
+                  <span className="align-self-center">
+                    Page {currentPage} of {totalPages}
+                  </span>
+                  <button
+                    className="btn btn-primary"
+                    disabled={currentPage === totalPages || loading}
+                    onClick={() => handleSearch(currentQuery, searchType, currentPage + 1)}
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+            </Container>
+          }
+        />
+        <Route path="/album/:id" element={<AlbumDetails />} />
+      </Routes>
     </Router>
   );
 }

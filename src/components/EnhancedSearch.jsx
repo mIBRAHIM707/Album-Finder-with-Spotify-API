@@ -46,7 +46,7 @@ const EnhancedSearch = ({ onSearch, loading }) => {
 
   return (
     <SearchContainer>
-      <InputGroup className="search-input-group">
+      <InputGroup className="mb-3">
         <Form.Select 
           style={{ maxWidth: '120px' }}
           value={searchType}
@@ -78,7 +78,24 @@ const EnhancedSearch = ({ onSearch, loading }) => {
                 setShowSuggestions(false);
               }}
             >
-              {item.name}
+              <div className="d-flex align-items-center">
+                {item.images && item.images[2] && (
+                  <img
+                    src={item.images[2].url}
+                    alt={item.name}
+                    style={{ width: '40px', height: '40px', marginRight: '10px', borderRadius: '4px' }}
+                  />
+                )}
+                <div>
+                  <div>{item.name}</div>
+                  {searchType === 'artist' && item.genres && (
+                    <small className="text-muted">{item.genres[0]}</small>
+                  )}
+                  {searchType === 'album' && item.artists && (
+                    <small className="text-muted">{item.artists[0].name}</small>
+                  )}
+                </div>
+              </div>
             </Dropdown.Item>
           ))}
         </Dropdown.Menu>

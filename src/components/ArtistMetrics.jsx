@@ -5,19 +5,15 @@ import { Card } from 'react-bootstrap';
 const ArtistMetrics = ({ albums }) => {
   const timelineData = useMemo(() => {
     return albums
-      .filter(album => album.popularity !== undefined) // Only include albums with popularity data
+      .filter(album => album.popularity !== undefined)
       .map(album => ({
-        name: album.name.length > 20 ? album.name.substring(0, 20) + '...' : album.name,
+        name: album.name.length > 15 ? album.name.substring(0, 15) + '...' : album.name,
         fullName: album.name,
         year: new Date(album.release_date).getFullYear(),
         popularity: album.popularity
       }))
       .sort((a, b) => a.year - b.year);
   }, [albums]);
-
-  if (timelineData.length === 0) {
-    return null;
-  }
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
@@ -37,6 +33,10 @@ const ArtistMetrics = ({ albums }) => {
     return null;
   };
 
+  if (timelineData.length === 0) {
+    return null;
+  }
+
   const chartTextStyle = {
     fill: '#FFFFFF',
     fontSize: '12px',
@@ -46,7 +46,7 @@ const ArtistMetrics = ({ albums }) => {
   return (
     <Card className="mb-4">
       <Card.Body>
-        <h5 className="mb-4">Album Popularity Timeline</h5>
+        <h5 className="mb-4 text-start">Album Popularity Timeline</h5>
         <div style={{ width: '100%', height: 300 }}>
           <ResponsiveContainer>
             <LineChart data={timelineData} margin={{ top: 20, right: 30, left: 20, bottom: 45 }}>
@@ -65,6 +65,7 @@ const ArtistMetrics = ({ albums }) => {
                 tickCount={6}
                 tickLine={{ stroke: '#FFFFFF' }}
                 axisLine={{ stroke: '#FFFFFF' }}
+                label={{ value: 'Popularity', angle: -90, position: 'insideLeft', ...chartTextStyle }}
               />
               <Tooltip content={<CustomTooltip />} />
               <Line 
@@ -79,20 +80,21 @@ const ArtistMetrics = ({ albums }) => {
           </ResponsiveContainer>
         </div>
 
-        <h5 className="mb-4 mt-5">Album Popularity Comparison</h5>
+        <h5 className="mb-4 mt-5 text-start">Album Popularity Comparison</h5>
         <div style={{ width: '100%', height: 300 }}>
           <ResponsiveContainer>
-            <BarChart data={timelineData} margin={{ top: 20, right: 30, left: 20, bottom: 100 }}>
+            <BarChart data={timelineData} margin={{ top: 20, right: 30, left: 20, bottom: 120 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#404040" opacity={0.5} />
               <XAxis 
                 dataKey="name" 
                 angle={-45}
                 textAnchor="end"
-                height={80}
-                tick={chartTextStyle}
+                height={100}
+                tick={{ ...chartTextStyle, fontSize: '10px' }}
                 tickLine={{ stroke: '#FFFFFF' }}
                 axisLine={{ stroke: '#FFFFFF' }}
                 interval={0}
+                tickMargin={10}
               />
               <YAxis 
                 domain={[0, 100]} 
@@ -100,6 +102,7 @@ const ArtistMetrics = ({ albums }) => {
                 tickCount={6}
                 tickLine={{ stroke: '#FFFFFF' }}
                 axisLine={{ stroke: '#FFFFFF' }}
+                label={{ value: 'Popularity', angle: -90, position: 'insideLeft', ...chartTextStyle }}
               />
               <Tooltip content={<CustomTooltip />} />
               <Bar 

@@ -121,33 +121,35 @@ const AlbumDetails = () => {
     <Container className="py-5">
       <Row>
         <Col md={4}>
-          <Image src={album.images[0].url} alt={album.name} fluid className="shadow-sm" />
-          <div className="mt-3">
-            <h6 className="text-muted">Popularity</h6>
-            <ProgressBar 
-              now={album.popularity} 
-              label={`${album.popularity}%`}
-              variant="success"
-              className="mb-3"
-            />
+          <div className="sticky-top" style={{ top: '2rem' }}>
+            <Image src={album.images[0].url} alt={album.name} fluid className="shadow-sm mb-3" />
+            <div className="mb-3">
+              <h6 className="text-muted mb-2 text-start">Popularity</h6>
+              <ProgressBar 
+                now={album.popularity} 
+                label={`${album.popularity}%`}
+                variant="success"
+                className="mb-3"
+              />
+            </div>
+            <div className="mb-3 text-start">
+              {album.genres && album.genres.map(genre => (
+                <Badge 
+                  bg="secondary" 
+                  className="me-2 mb-2" 
+                  key={genre}
+                >
+                  {genre}
+                </Badge>
+              ))}
+            </div>
+            <Link to="/" className="btn btn-outline-primary d-block text-start">
+              ← Back to Search
+            </Link>
           </div>
-          <div className="mb-3">
-            {album.genres && album.genres.map(genre => (
-              <Badge 
-                bg="secondary" 
-                className="me-2 mb-2" 
-                key={genre}
-              >
-                {genre}
-              </Badge>
-            ))}
-          </div>
-          <Link to="/" className="btn btn-outline-primary">
-            Back to Search
-          </Link>
         </Col>
         <Col md={8}>
-          <div className="mb-4">
+          <div className="mb-4 text-start">
             <h2>{album.name}</h2>
             <p className="text-muted">
               by {album.artists.map((artist) => artist.name).join(", ")}
@@ -182,7 +184,7 @@ const AlbumDetails = () => {
           <ArtistMetrics albums={artistAlbumsWithMetrics} />
           
           {/* Track List */}
-          <h4 className="mb-3">Tracks</h4>
+          <h4 className="mb-3 text-start">Tracks</h4>
           <TrackList tracks={tracks} />
           
           {/* Related Albums */}
