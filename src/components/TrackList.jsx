@@ -9,6 +9,7 @@ const TrackItem = styled(ListGroup.Item)`
   border-color: rgba(255, 255, 255, 0.1) !important;
   transition: var(--transition-default);
   padding: 0.75rem var(--space-md) !important;
+  text-align: left !important;
 
   &:hover {
     background: var(--color-surface) !important;
@@ -40,6 +41,7 @@ const TrackInfo = styled.div`
   display: flex;
   flex-direction: column;
   min-width: 0;
+  text-align: left !important;
 `;
 
 const TrackName = styled.div`
@@ -49,6 +51,7 @@ const TrackName = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  text-align: left !important;
 `;
 
 const TrackMeta = styled.div`

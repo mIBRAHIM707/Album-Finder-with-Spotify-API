@@ -121,23 +121,14 @@ const ArtistMetrics = ({ albums }) => {
           <ResponsiveContainer>
             <BarChart 
               data={timelineData} 
-              margin={{ top: 20, right: 30, left: 20, bottom: 100 }}
+              margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
               barGap={8}
             >
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)" />
               <XAxis 
                 dataKey="name" 
-                {...chartCommonProps}
-                angle={-45}
-                textAnchor="end"
-                height={100}
-                tick={{ 
-                  fontSize: 10,
-                  textAnchor: 'end',
-                  transform: 'translate(0, 8)'
-                }}
-                interval={0}
-                tickMargin={10}
+                height={0}
+                tick={false}
               />
               <YAxis 
                 {...chartCommonProps}

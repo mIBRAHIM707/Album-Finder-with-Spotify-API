@@ -12,6 +12,7 @@ import LoadingSpinner from './components/LoadingSpinner';
 const DetailContainer = styled(Container)`
   padding-top: var(--space-xl);
   padding-bottom: var(--space-xl);
+  text-align: left;
 `;
 
 const AlbumImage = styled(Image)`
@@ -50,18 +51,21 @@ const AlbumTitle = styled.h2`
   color: var(--color-text);
   margin-bottom: var(--space-xs);
   font-weight: 700;
+  text-align: left;
 `;
 
 const ArtistName = styled.p`
   color: var(--color-text-secondary);
   font-size: 1.1rem;
   margin-bottom: var(--space-md);
+  text-align: left;
 `;
 
 const MetaContainer = styled.div`
   display: flex;
   gap: var(--space-lg);
   margin-bottom: var(--space-md);
+  text-align: left;
 `;
 
 const MetaItem = styled.div`
