@@ -1,65 +1,96 @@
 import React from 'react';
-import { Card, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import LazyImage from './LazyImage';
+import styled from 'styled-components';
+import { BsPlayFill } from 'react-icons/bs';
+
+const StyledCard = styled(Card)`
+  background: var(--color-card);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: var(--transition-default);
+  height: 100%;
+
+  &:hover {
+    background: var(--color-card-hover);
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-lg);
+    
+    .card-img-overlay {
+      opacity: 1;
+    }
+  }
+`;
+
+const ImageOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: var(--transition-default);
+
+  .play-icon {
+    color: var(--color-primary);
+    font-size: 3rem;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  }
+`;
+
+const AlbumImage = styled(Card.Img)`
+  aspect-ratio: 1;
+  object-fit: cover;
+  transition: var(--transition-default);
+`;
+
+const AlbumTitle = styled(Card.Title)`
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--color-text);
+`;
+
+const ArtistName = styled.p`
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  margin: 0.25rem 0;
+`;
+
+const ReleaseYear = styled.span`
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+`;
 
 const AlbumCard = ({ album }) => {
+  const releaseYear = new Date(album.release_date).getFullYear();
+  
   return (
-    <Card className="album-card h-100">
-      <Link 
-        to={`/album/${album.id}`}
-        className="position-relative d-block"
-        style={{ textDecoration: 'none' }}
-      >
-        <img
-          src={album.images[0].url}
-          alt={album.name}
-          className="card-img-top"
-          style={{
-            width: '100%',
-            aspectRatio: '1/1',
-            objectFit: 'cover',
-            display: 'block'
-          }}
-        />
-        <div 
-          className="position-absolute top-0 start-0 w-100 h-100"
-          style={{
-            background: 'rgba(35, 45, 63, 0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            opacity: '0',
-            transition: 'opacity 0.3s',
-            pointerEvents: 'none' // This stops it from interfering with click events
-          }}
-        >
-          <i className="fas fa-play-circle" style={{ color: 'var(--color-primary)', fontSize: '3rem' }}></i>
+    <Link to={`/album/${album.id}`} style={{ textDecoration: 'none' }}>
+      <StyledCard>
+        <div style={{ position: 'relative' }}>
+          <AlbumImage variant="top" src={album.images[0]?.url} alt={album.name} />
+          <ImageOverlay className="card-img-overlay">
+            <BsPlayFill className="play-icon" />
+          </ImageOverlay>
         </div>
-      </Link>
-      <Card.Body className="p-3 d-flex flex-column">
-        <OverlayTrigger
-          placement="top"
-          overlay={<Tooltip id={`tooltip-${album.id}`}>{album.name}</Tooltip>}
-        >
-          <Card.Title className="album-title text-white mb-2 text-truncate">
-            {album.name}
-          </Card.Title>
-        </OverlayTrigger>
-        <Card.Text className="text-muted small mb-3">
-          {new Date(album.release_date).getFullYear()}
-        </Card.Text>
-        <Button
-          href={album.external_urls.spotify}
-          className="mt-auto spotify-button"
-          variant="dark"
-          size="sm"
-        >
-          Open in Spotify
-        </Button>
-      </Card.Body>
-    </Card>
+        <Card.Body>
+          <AlbumTitle>{album.name}</AlbumTitle>
+          <ArtistName>
+            {album.artists?.map(artist => artist.name).join(', ')}
+          </ArtistName>
+          <ReleaseYear>{releaseYear}</ReleaseYear>
+        </Card.Body>
+      </StyledCard>
+    </Link>
   );
 };
 
@@ -72,10 +103,12 @@ AlbumCard.propTypes = {
         url: PropTypes.string.isRequired,
       })
     ).isRequired,
+    artists: PropTypes.arrayOf(
+      PropTypes.shape({
+        name: PropTypes.string.isRequired,
+      })
+    ).isRequired,
     release_date: PropTypes.string.isRequired,
-    external_urls: PropTypes.shape({
-      spotify: PropTypes.string.isRequired,
-    }).isRequired,
   }).isRequired,
 };
 

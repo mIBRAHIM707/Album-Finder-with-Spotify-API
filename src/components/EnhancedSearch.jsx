@@ -9,8 +9,45 @@ const SearchContainer = styled.div`
   top: 0;
   z-index: 1000;
   padding: 20px 0;
-  background: linear-gradient(180deg, #121212 0%, rgba(18, 18, 18, 0.8) 100%);
+  background: linear-gradient(180deg, var(--color-background) 0%, rgba(18, 18, 18, 0.8) 100%);
   backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+`;
+
+const StyledInputGroup = styled(InputGroup)`
+  max-width: 700px;
+  margin: 0 auto;
+  background: var(--color-surface);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  transition: var(--transition-default);
+
+  &:focus-within {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+  }
+`;
+
+const StyledFormSelect = styled(Form.Select)`
+  max-width: 120px !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+  cursor: pointer;
+  
+  &:focus {
+    border-color: var(--color-primary) !important;
+  }
+`;
+
+const StyledDropdownMenu = styled(Dropdown.Menu)`
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+  margin-top: 0.5rem;
+  border: none;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+  border-radius: var(--radius-md);
 `;
 
 const EnhancedSearch = ({ onSearch, loading }) => {
@@ -46,15 +83,14 @@ const EnhancedSearch = ({ onSearch, loading }) => {
 
   return (
     <SearchContainer>
-      <InputGroup className="mb-3">
-        <Form.Select 
-          style={{ maxWidth: '120px' }}
+      <StyledInputGroup className="mb-3">
+        <StyledFormSelect 
           value={searchType}
           onChange={(e) => setSearchType(e.target.value)}
         >
           <option value="artist">Artist</option>
           <option value="album">Album</option>
-        </Form.Select>
+        </StyledFormSelect>
         <FormControl
           placeholder={`Search by ${searchType}`}
           value={query}
@@ -62,13 +98,21 @@ const EnhancedSearch = ({ onSearch, loading }) => {
           onFocus={() => setShowSuggestions(true)}
           onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
         />
-        <StyledButton onClick={handleSearch} disabled={loading || !query.trim()}>
+        <StyledButton 
+          onClick={handleSearch} 
+          disabled={loading || !query.trim()}
+          style={{ 
+            borderTopLeftRadius: 0, 
+            borderBottomLeftRadius: 0,
+            minWidth: '100px'
+          }}
+        >
           {loading ? "Searching..." : "Search"}
         </StyledButton>
-      </InputGroup>
+      </StyledInputGroup>
 
       {showSuggestions && suggestions.length > 0 && (
-        <Dropdown.Menu show style={{ width: '100%', maxHeight: '300px', overflowY: 'auto' }}>
+        <StyledDropdownMenu show>
           {suggestions.map((item) => (
             <Dropdown.Item
               key={item.id}
@@ -77,17 +121,24 @@ const EnhancedSearch = ({ onSearch, loading }) => {
                 onSearch(item.name, searchType);
                 setShowSuggestions(false);
               }}
+              className="py-2"
             >
               <div className="d-flex align-items-center">
                 {item.images && item.images[2] && (
                   <img
                     src={item.images[2].url}
                     alt={item.name}
-                    style={{ width: '40px', height: '40px', marginRight: '10px', borderRadius: '4px' }}
+                    style={{ 
+                      width: '40px', 
+                      height: '40px', 
+                      marginRight: '10px', 
+                      borderRadius: 'var(--radius-sm)',
+                      objectFit: 'cover'
+                    }}
                   />
                 )}
                 <div>
-                  <div>{item.name}</div>
+                  <div className="fw-semibold">{item.name}</div>
                   {searchType === 'artist' && item.genres && (
                     <small className="text-muted">{item.genres[0]}</small>
                   )}
@@ -98,7 +149,7 @@ const EnhancedSearch = ({ onSearch, loading }) => {
               </div>
             </Dropdown.Item>
           ))}
-        </Dropdown.Menu>
+        </StyledDropdownMenu>
       )}
     </SearchContainer>
   );
