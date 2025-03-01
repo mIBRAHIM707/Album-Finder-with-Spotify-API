@@ -8,7 +8,7 @@ const ErrorContainer = styled.div`
   border: 1px solid var(--color-error);
   border-radius: var(--radius-md);
   padding: var(--space-md) var(--space-lg);
-  margin: var(--space-md) auto;
+  margin: calc(80px + var(--space-md)) auto var(--space-md); // Add margin to account for fixed header
   max-width: 600px;
   display: flex;
   align-items: center;

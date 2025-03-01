@@ -6,12 +6,13 @@ import styled from 'styled-components';
 
 const SearchContainer = styled.div`
   position: sticky;
-  top: 0;
-  z-index: 1000;
+  top: 80px; // Adjust this value based on your header height
+  z-index: 999;
   padding: 20px 0;
   background: linear-gradient(180deg, var(--color-background) 0%, rgba(18, 18, 18, 0.8) 100%);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 80px; // Add margin to account for fixed header
 `;
 
 const StyledInputGroup = styled(InputGroup)`

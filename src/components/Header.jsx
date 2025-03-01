@@ -8,8 +8,10 @@ const StyledNavbar = styled(Navbar)`
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   padding: var(--space-md) 0;
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 1000;
 `;
 
@@ -78,7 +80,7 @@ const Header = () => {
           <Brand to="/">
             <Logo src="/logo.jpeg" alt="Site Logo" />
             <SiteName>
-              <Title>Aimran's Music Explorer</Title>
+              <Title>mIbrahim707's Music Explorer</Title>
               <Subtitle>Powered by Spotify</Subtitle>
             </SiteName>
           </Brand>

@@ -27,6 +27,7 @@ const SpinnerContainer = styled(Container)`
   justify-content: center;
   min-height: 200px;
   padding: var(--space-xl) 0;
+  margin-top: 80px; // Add margin to account for fixed header
 `;
 
 const SpinnerWrapper = styled.div`
