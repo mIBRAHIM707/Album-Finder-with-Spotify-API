@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import styled, { keyframes } from 'styled-components';
-import { BsPeople, BsSpotify, BsCollection } from 'react-icons/bs';
+import { BsPeople, BsSpotify } from 'react-icons/bs';
 
 const fadeIn = keyframes`
   from { opacity: 0; transform: translateY(10px); }
@@ -40,7 +40,7 @@ const StyledCard = styled(Card)`
 
 const ImageContainer = styled.div`
   position: relative;
-  padding-bottom: 100%;
+  padding-bottom: 100%; // Changed back to 100% for full square image
   overflow: hidden;
 `;
 
@@ -76,39 +76,19 @@ const Overlay = styled.div`
 `;
 
 const CardContent = styled(Card.Body)`
-  padding: var(--space-md);
+  padding: var(--space-xs) var(--space-md); // Reduced padding
   position: relative;
+  min-height: 50px; // Reduced minimum height
 `;
 
 const ArtistName = styled.h3`
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 600;
-  margin: 0 0 var(--space-xs);
+  margin: 0;
   color: var(--color-text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-`;
-
-const GenreContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem;
-  margin-bottom: var(--space-sm);
-`;
-
-const Genre = styled.span`
-  background: var(--color-surface);
-  color: var(--color-text-secondary);
-  padding: 0.25rem 0.5rem;
-  border-radius: var(--radius-pill);
-  font-size: 0.75rem;
-  transition: var(--transition-default);
-
-  &:hover {
-    background: var(--color-primary);
-    color: black;
-  }
 `;
 
 const MetaInfo = styled.div`
@@ -116,26 +96,26 @@ const MetaInfo = styled.div`
   align-items: center;
   gap: var(--space-md);
   color: var(--color-text-secondary);
-  font-size: 0.8rem;
+  font-size: 0.75rem; // Reduced font size
   opacity: 0;
   transform: translateY(10px);
   transition: var(--transition-default);
   class-name: meta-info;
 
   svg {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
   }
 `;
 
 const SpotifyButton = styled.a`
   position: absolute;
-  top: var(--space-md);
-  right: var(--space-md);
+  top: var(--space-sm); // Reduced spacing
+  right: var(--space-sm); // Reduced spacing
   background: var(--color-primary);
   color: black;
   border: none;
-  width: 32px;
-  height: 32px;
+  width: 28px; // Reduced size
+  height: 28px; // Reduced size
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -157,27 +137,6 @@ const SpotifyButton = styled.a`
   }
 `;
 
-const Popularity = styled.div`
-  position: absolute;
-  top: var(--space-md);
-  left: var(--space-md);
-  background: rgba(0, 0, 0, 0.7);
-  color: var(--color-primary);
-  padding: 0.25rem 0.5rem;
-  border-radius: var(--radius-pill);
-  font-size: 0.75rem;
-  font-weight: 600;
-  z-index: 2;
-  opacity: 0;
-  transform: translateX(-10px);
-  transition: var(--transition-default);
-
-  ${StyledCard}:hover & {
-    opacity: 1;
-    transform: translateX(0);
-  }
-`;
-
 const ArtistCard = ({ artist, onSelect }) => {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -196,20 +155,12 @@ const ArtistCard = ({ artist, onSelect }) => {
           {isHovered && (
             <MetaInfo>
               <span><BsPeople /> {artist.followers?.total?.toLocaleString()} followers</span>
-              {artist.popularity && (
-                <span><BsCollection /> {artist.popularity}% popularity</span>
-              )}
             </MetaInfo>
           )}
         </Overlay>
       </ImageContainer>
       <CardContent>
         <ArtistName title={artist.name}>{artist.name}</ArtistName>
-        <GenreContainer>
-          {artist.genres?.slice(0, 3).map((genre) => (
-            <Genre key={genre}>{genre}</Genre>
-          ))}
-        </GenreContainer>
         {artist.external_urls?.spotify && (
           <SpotifyButton 
             href={artist.external_urls.spotify}
@@ -220,11 +171,6 @@ const ArtistCard = ({ artist, onSelect }) => {
           >
             <BsSpotify />
           </SpotifyButton>
-        )}
-        {artist.popularity && (
-          <Popularity>
-            {artist.popularity}% Popular
-          </Popularity>
         )}
       </CardContent>
     </StyledCard>
@@ -240,11 +186,9 @@ ArtistCard.propTypes = {
         url: PropTypes.string.isRequired,
       })
     ),
-    genres: PropTypes.arrayOf(PropTypes.string),
     followers: PropTypes.shape({
       total: PropTypes.number,
     }),
-    popularity: PropTypes.number,
     external_urls: PropTypes.shape({
       spotify: PropTypes.string,
     }),

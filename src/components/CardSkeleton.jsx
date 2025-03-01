@@ -28,11 +28,12 @@ const ShimmerEffect = styled.div`
 
 const ImageSkeleton = styled(ShimmerEffect)`
   width: 100%;
-  padding-bottom: 100%;
+  padding-bottom: ${props => props.type === 'artist' ? '80%' : '100%'};
 `;
 
 const ContentContainer = styled.div`
-  padding: var(--space-md);
+  padding: var(--space-xs) var(--space-md);
+  min-height: ${props => props.type === 'artist' ? '50px' : '120px'};
 `;
 
 const TitleSkeleton = styled(ShimmerEffect)`
@@ -49,32 +50,13 @@ const SubtitleSkeleton = styled(ShimmerEffect)`
   margin-bottom: var(--space-sm);
 `;
 
-const TagContainer = styled.div`
-  display: flex;
-  gap: var(--space-xs);
-  margin-top: var(--space-sm);
-`;
-
-const TagSkeleton = styled(ShimmerEffect)`
-  height: 20px;
-  width: ${props => props.width};
-  border-radius: var(--radius-pill);
-`;
-
 const CardSkeleton = ({ type = 'album' }) => {
   return (
     <Card>
-      <ImageSkeleton />
-      <ContentContainer>
+      <ImageSkeleton type={type} />
+      <ContentContainer type={type}>
         <TitleSkeleton />
         <SubtitleSkeleton />
-        {type === 'artist' && (
-          <TagContainer>
-            <TagSkeleton width="30%" />
-            <TagSkeleton width="40%" />
-            <TagSkeleton width="25%" />
-          </TagContainer>
-        )}
       </ContentContainer>
     </Card>
   );

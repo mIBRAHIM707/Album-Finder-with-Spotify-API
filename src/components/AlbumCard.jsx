@@ -137,7 +137,7 @@ const ArtistName = styled.p`
 const MetaInfo = styled.div`
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  justify-content: space-between;
   margin-top: var(--space-sm);
   color: var(--color-text-secondary);
   font-size: 0.75rem;
@@ -145,6 +145,19 @@ const MetaInfo = styled.div`
   svg {
     font-size: 0.9rem;
   }
+`;
+
+const MetaYear = styled.span`
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+`;
+
+const MetaTracks = styled.span`
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  text-align: right;
 `;
 
 const SpotifyButton = styled.a`
@@ -200,9 +213,9 @@ const AlbumCard = ({ album }) => {
             {album.artists?.map(artist => artist.name).join(', ')}
           </ArtistName>
           <MetaInfo>
-            <span><BsClock /> {releaseYear}</span>
+            <MetaYear><BsClock /> {releaseYear}</MetaYear>
             {album.total_tracks && (
-              <span><BsVolumeUp /> {album.total_tracks} tracks</span>
+              <MetaTracks><BsVolumeUp /> {album.total_tracks} tracks</MetaTracks>
             )}
           </MetaInfo>
           {album.external_urls?.spotify && (
