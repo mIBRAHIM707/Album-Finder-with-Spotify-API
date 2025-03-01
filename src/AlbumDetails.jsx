@@ -8,10 +8,12 @@ import ArtistInfo from './components/ArtistInfo';
 import RelatedAlbums from './components/RelatedAlbums';
 import ArtistMetrics from './components/ArtistMetrics';
 import LoadingSpinner from './components/LoadingSpinner';
+import Header from './components/Header';
 
 const DetailContainer = styled(Container)`
   padding-top: var(--space-xl);
   padding-bottom: var(--space-xl);
+  margin-top: var(--space-lg);
   text-align: left;
 `;
 
@@ -194,86 +196,104 @@ const AlbumDetails = () => {
   }, [id, accessToken]);
 
   if (loading) {
-    return <LoadingSpinner message="Loading album details..." />;
+    return (
+      <>
+        <Header />
+        <LoadingSpinner message="Loading album details..." />
+      </>
+    );
   }
 
   if (error) {
-    return <div className="text-center text-danger">Error: {error}</div>;
+    return (
+      <>
+        <Header />
+        <div className="text-center text-danger">Error: {error}</div>
+      </>
+    );
   }
 
   if (!album) {
-    return <div className="text-center">Album not found.</div>;
+    return (
+      <>
+        <Header />
+        <div className="text-center">Album not found.</div>
+      </>
+    );
   }
 
   return (
-    <DetailContainer>
-      <Row>
-        <Col md={4}>
-          <StickyContainer>
-            <AlbumImage src={album.images[0].url} alt={album.name} fluid />
-            <div className="mt-4">
-              <PopularityLabel>Popularity</PopularityLabel>
-              <StyledProgressBar 
-                now={album.popularity} 
-                variant="success"
-                className="mb-3"
-              />
-            </div>
-            <BadgeContainer>
-              {album.genres?.map(genre => (
-                <Badge 
-                  bg="secondary" 
-                  key={genre}
-                >
-                  {genre}
-                </Badge>
-              ))}
-            </BadgeContainer>
-            <BackButton to="/">
-              <BsArrowLeft /> Back to Search
-            </BackButton>
-          </StickyContainer>
-        </Col>
-        <Col md={8}>
-          <div className="mb-4">
-            <AlbumTitle>{album.name}</AlbumTitle>
-            <ArtistName>
-              by {album.artists.map((artist) => artist.name).join(", ")}
-            </ArtistName>
-            <MetaContainer>
-              <MetaItem>
-                <small>Release Date</small>
-                <strong>{formatReleaseDate(album.release_date)}</strong>
-              </MetaItem>
-              <MetaItem>
-                <small>Tracks</small>
-                <strong>{album.total_tracks}</strong>
-              </MetaItem>
-              {album.label && (
+    <>
+      <Header />
+      <DetailContainer>
+        <Row>
+          <Col md={4}>
+            <StickyContainer>
+              <AlbumImage src={album.images[0].url} alt={album.name} fluid />
+              <div className="mt-4">
+                <PopularityLabel>Popularity</PopularityLabel>
+                <StyledProgressBar 
+                  now={album.popularity} 
+                  variant="success"
+                  className="mb-3"
+                />
+              </div>
+              <BadgeContainer>
+                {album.genres?.map(genre => (
+                  <Badge 
+                    bg="secondary" 
+                    key={genre}
+                  >
+                    {genre}
+                  </Badge>
+                ))}
+              </BadgeContainer>
+              <BackButton to="/">
+                <BsArrowLeft /> Back to Search
+              </BackButton>
+            </StickyContainer>
+          </Col>
+          <Col md={8}>
+            <div className="mb-4">
+              <AlbumTitle>{album.name}</AlbumTitle>
+              <ArtistName>
+                by {album.artists.map((artist) => artist.name).join(", ")}
+              </ArtistName>
+              <MetaContainer>
                 <MetaItem>
-                  <small>Label</small>
-                  <strong>{album.label}</strong>
+                  <small>Release Date</small>
+                  <strong>{formatReleaseDate(album.release_date)}</strong>
                 </MetaItem>
+                <MetaItem>
+                  <small>Tracks</small>
+                  <strong>{album.total_tracks}</strong>
+                </MetaItem>
+                {album.label && (
+                  <MetaItem>
+                    <small>Label</small>
+                    <strong>{album.label}</strong>
+                  </MetaItem>
+                )}
+              </MetaContainer>
+              {album.copyrights && (
+                <small className="text-muted d-block mt-2">
+                  {album.copyrights[0]?.text}
+                </small>
               )}
-            </MetaContainer>
-            {album.copyrights && (
-              <small className="text-muted d-block mt-2">
-                {album.copyrights[0]?.text}
-              </small>
-            )}
-          </div>
-          
-          <ArtistInfo artistId={album.artists[0].id} />
-          <ArtistMetrics albums={artistAlbumsWithMetrics} />
-          <h4 className="mb-3">Tracks</h4>
-          <TrackList tracks={tracks} />
-          <RelatedAlbums 
-            artistId={album.artists[0].id}
-            currentAlbumId={album.id}
-          />
-        </Col>
-      </Row>
-    </DetailContainer>
+            </div>
+            
+            <ArtistInfo artistId={album.artists[0].id} />
+            <ArtistMetrics albums={artistAlbumsWithMetrics} />
+            <h4 className="mb-3">Tracks</h4>
+            <TrackList tracks={tracks} />
+            <RelatedAlbums 
+              artistId={album.artists[0].id}
+              currentAlbumId={album.id}
+            />
+          </Col>
+        </Row>
+      </DetailContainer>
+    </>
   );
 };
 

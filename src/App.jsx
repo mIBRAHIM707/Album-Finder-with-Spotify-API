@@ -11,6 +11,7 @@ import ErrorMessage from "./components/ErrorMessage";
 import Pagination from "./components/Pagination";
 import spotifyApi from "./services/spotifyApi";
 import styled from "styled-components";
+import Header from './components/Header';
 
 const clientId = import.meta.env.VITE_CLIENT_ID;
 const clientSecret = import.meta.env.VITE_CLIENT_SECRET;
@@ -114,6 +115,7 @@ function App() {
 
   return (
     <Router>
+      <Header />
       <Routes>
         <Route
           path="/"
@@ -160,6 +162,28 @@ function App() {
           }
         />
         <Route path="/album/:id" element={<AlbumDetails />} />
+        <Route 
+          path="/favorites" 
+          element={
+            <AppContainer>
+              <Container>
+                <h2 className="mb-4">My Favorites</h2>
+                <p className="text-muted">Coming soon...</p>
+              </Container>
+            </AppContainer>
+          } 
+        />
+        <Route 
+          path="/history" 
+          element={
+            <AppContainer>
+              <Container>
+                <h2 className="mb-4">Search History</h2>
+                <p className="text-muted">Coming soon...</p>
+              </Container>
+            </AppContainer>
+          } 
+        />
       </Routes>
     </Router>
   );
