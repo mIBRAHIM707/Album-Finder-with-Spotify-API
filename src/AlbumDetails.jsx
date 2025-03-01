@@ -1,11 +1,96 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Container, Row, Col, Image, Badge, ProgressBar } from "react-bootstrap";
+import styled from 'styled-components';
+import { BsArrowLeft } from 'react-icons/bs';
 import TrackList from "./components/TrackList";
 import ArtistInfo from './components/ArtistInfo';
 import RelatedAlbums from './components/RelatedAlbums';
 import ArtistMetrics from './components/ArtistMetrics';
 import LoadingSpinner from './components/LoadingSpinner';
+
+const DetailContainer = styled(Container)`
+  padding-top: var(--space-xl);
+  padding-bottom: var(--space-xl);
+`;
+
+const AlbumImage = styled(Image)`
+  box-shadow: var(--shadow-lg);
+  border-radius: var(--radius-md);
+  width: 100%;
+  transition: var(--transition-default);
+
+  &:hover {
+    transform: scale(1.02);
+  }
+`;
+
+const StickyContainer = styled.div`
+  position: sticky;
+  top: 2rem;
+`;
+
+const BackButton = styled(Link)`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 500;
+  padding: var(--space-sm) 0;
+  transition: var(--transition-default);
+
+  &:hover {
+    color: var(--color-primary-hover);
+    transform: translateX(-4px);
+  }
+`;
+
+const AlbumTitle = styled.h2`
+  color: var(--color-text);
+  margin-bottom: var(--space-xs);
+  font-weight: 700;
+`;
+
+const ArtistName = styled.p`
+  color: var(--color-text-secondary);
+  font-size: 1.1rem;
+  margin-bottom: var(--space-md);
+`;
+
+const MetaContainer = styled.div`
+  display: flex;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-md);
+`;
+
+const MetaItem = styled.div`
+  small {
+    color: var(--color-text-secondary);
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+
+  strong {
+    color: var(--color-text);
+  }
+`;
+
+const PopularityLabel = styled.h6`
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-sm);
+`;
+
+const StyledProgressBar = styled(ProgressBar)`
+  height: 8px;
+`;
+
+const BadgeContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin: var(--space-md) 0;
+`;
 
 const AlbumDetails = () => {
   const { id } = useParams();
@@ -13,7 +98,6 @@ const AlbumDetails = () => {
   const [tracks, setTracks] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [artistAlbums, setArtistAlbums] = useState([]);
   const [artistAlbumsWithMetrics, setArtistAlbumsWithMetrics] = useState([]);
   const accessToken = localStorage.getItem("accessToken"); // Retrieve access token
 
@@ -110,66 +194,64 @@ const AlbumDetails = () => {
   }
 
   if (error) {
-    return <div style={{ color: "red", textAlign: "center" }}>Error: {error}</div>;
+    return <div className="text-center text-danger">Error: {error}</div>;
   }
 
   if (!album) {
-    return <div style={{ textAlign: "center" }}>Album not found.</div>;
+    return <div className="text-center">Album not found.</div>;
   }
 
   return (
-    <Container className="py-5">
+    <DetailContainer>
       <Row>
         <Col md={4}>
-          <div className="sticky-top" style={{ top: '2rem' }}>
-            <Image src={album.images[0].url} alt={album.name} fluid className="shadow-sm mb-3" />
-            <div className="mb-3">
-              <h6 className="text-muted mb-2 text-start">Popularity</h6>
-              <ProgressBar 
+          <StickyContainer>
+            <AlbumImage src={album.images[0].url} alt={album.name} fluid />
+            <div className="mt-4">
+              <PopularityLabel>Popularity</PopularityLabel>
+              <StyledProgressBar 
                 now={album.popularity} 
-                label={`${album.popularity}%`}
                 variant="success"
                 className="mb-3"
               />
             </div>
-            <div className="mb-3 text-start">
-              {album.genres && album.genres.map(genre => (
+            <BadgeContainer>
+              {album.genres?.map(genre => (
                 <Badge 
                   bg="secondary" 
-                  className="me-2 mb-2" 
                   key={genre}
                 >
                   {genre}
                 </Badge>
               ))}
-            </div>
-            <Link to="/" className="btn btn-outline-primary d-block text-start">
-              ← Back to Search
-            </Link>
-          </div>
+            </BadgeContainer>
+            <BackButton to="/">
+              <BsArrowLeft /> Back to Search
+            </BackButton>
+          </StickyContainer>
         </Col>
         <Col md={8}>
-          <div className="mb-4 text-start">
-            <h2>{album.name}</h2>
-            <p className="text-muted">
+          <div className="mb-4">
+            <AlbumTitle>{album.name}</AlbumTitle>
+            <ArtistName>
               by {album.artists.map((artist) => artist.name).join(", ")}
-            </p>
-            <div className="d-flex gap-4 mb-3">
-              <div>
-                <small className="text-muted d-block">Release Date</small>
+            </ArtistName>
+            <MetaContainer>
+              <MetaItem>
+                <small>Release Date</small>
                 <strong>{formatReleaseDate(album.release_date)}</strong>
-              </div>
-              <div>
-                <small className="text-muted d-block">Tracks</small>
+              </MetaItem>
+              <MetaItem>
+                <small>Tracks</small>
                 <strong>{album.total_tracks}</strong>
-              </div>
+              </MetaItem>
               {album.label && (
-                <div>
-                  <small className="text-muted d-block">Label</small>
+                <MetaItem>
+                  <small>Label</small>
                   <strong>{album.label}</strong>
-                </div>
+                </MetaItem>
               )}
-            </div>
+            </MetaContainer>
             {album.copyrights && (
               <small className="text-muted d-block mt-2">
                 {album.copyrights[0]?.text}
@@ -177,24 +259,17 @@ const AlbumDetails = () => {
             )}
           </div>
           
-          {/* Artist Information */}
           <ArtistInfo artistId={album.artists[0].id} />
-          
-          {/* Artist Metrics */}
           <ArtistMetrics albums={artistAlbumsWithMetrics} />
-          
-          {/* Track List */}
-          <h4 className="mb-3 text-start">Tracks</h4>
+          <h4 className="mb-3">Tracks</h4>
           <TrackList tracks={tracks} />
-          
-          {/* Related Albums */}
           <RelatedAlbums 
             artistId={album.artists[0].id}
             currentAlbumId={album.id}
           />
         </Col>
       </Row>
-    </Container>
+    </DetailContainer>
   );
 };
 
