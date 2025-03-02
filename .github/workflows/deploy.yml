@@ -8,9 +8,13 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # This is important for the deploy action to work
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          persist-credentials: false  # Very important for deployment
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -42,3 +46,6 @@ jobs:
         with:
           folder: dist
           branch: gh-pages
+          token: ${{ secrets.GITHUB_TOKEN }}  # Use the automatically provided token
+          clean: true  # This removes old files
+          commit-message: "Deploy to GitHub Pages [skip ci]"

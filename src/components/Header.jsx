@@ -72,13 +72,16 @@ const NavLink = styled(Link)`
 
 const Header = () => {
   const location = useLocation();
+  
+  // Use window.location.origin to get base URL for assets
+  const basePath = import.meta.env.BASE_URL || '/';
 
   return (
     <StyledNavbar expand="lg">
       <Container>
         <Navbar.Brand as="div">
           <Brand to="/">
-            <Logo src="/logo.jpeg" alt="Site Logo" />
+            <Logo src={`${basePath}logo.jpeg`} alt="Site Logo" />
             <SiteName>
               <Title>mIbrahim707's Music Explorer</Title>
               <Subtitle>Powered by Spotify</Subtitle>

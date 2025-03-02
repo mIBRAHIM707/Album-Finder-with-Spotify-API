@@ -9,10 +9,12 @@ export default defineConfig({
     outDir: 'dist',
     assetsDir: 'assets',
     sourcemap: false,
-    // Ensure HTML file handles 404 redirects for SPA
     rollupOptions: {
       output: {
-        manualChunks: undefined
+        manualChunks: undefined,
+        entryFileNames: 'assets/[name].js',
+        chunkFileNames: 'assets/[name].js',
+        assetFileNames: 'assets/[name].[ext]'
       }
     }
   },
@@ -23,17 +25,6 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => '',
         secure: true,
-        configure: (proxy, _options) => {
-          proxy.on('error', (err, _req, _res) => {
-            console.log('Token proxy error:', err);
-          });
-          proxy.on('proxyReq', (proxyReq, req, _res) => {
-            console.log('Sending Token Request:', req.method);
-          });
-          proxy.on('proxyRes', (proxyRes, req, _res) => {
-            console.log('Received Token Response:', proxyRes.statusCode);
-          });
-        }
       },
       '/api': {
         target: 'https://api.spotify.com/v1',
@@ -43,24 +34,6 @@ export default defineConfig({
         headers: {
           'Origin': 'http://localhost:5173'
         },
-        timeout: 30000,
-        proxyTimeout: 30000,
-        configure: (proxy, _options) => {
-          proxy.on('error', (err, _req, _res) => {
-            console.log('API proxy error:', err);
-          });
-          proxy.on('proxyReq', (proxyReq, req, _res) => {
-            // Preserve authorization header
-            const authHeader = req.headers['authorization'];
-            if (authHeader) {
-              proxyReq.setHeader('Authorization', authHeader);
-            }
-            console.log('Sending Request:', req.method, req.url);
-          });
-          proxy.on('proxyRes', (proxyRes, req, _res) => {
-            console.log('Received Response:', proxyRes.statusCode, req.url);
-          });
-        }
       }
     }
   }
