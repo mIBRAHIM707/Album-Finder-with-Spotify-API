@@ -6,111 +6,82 @@ class SpotifyApi {
   }
 
   getAccessToken() {
-    return localStorage.getItem('accessToken');
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      throw new Error('No access token found. Please authenticate.');
+    }
+    return token;
+  }
+
+  async handleApiError(response) {
+    const error = await response.json();
+    
+    if (response.status === 401) {
+      // Token expired, clear it
+      localStorage.removeItem('accessToken');
+      throw new Error('Session expired. Please refresh the page.');
+    }
+    
+    throw new Error(error.error?.message || 'An unexpected error occurred');
+  }
+
+  async makeApiRequest(endpoint, options = {}) {
+    try {
+      const response = await fetch(`${this.baseUrl}${endpoint}`, {
+        ...options,
+        headers: {
+          ...options.headers,
+          Authorization: `Bearer ${this.getAccessToken()}`,
+        },
+      });
+
+      if (!response.ok) {
+        await this.handleApiError(response);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error(`API request failed: ${endpoint}`, error);
+      throw error;
+    }
   }
 
   async search(query, type, page = 1) {
-    const offset = (page - 1) * 20; // 20 items per page
+    const offset = (page - 1) * 20;
     const searchType = type === 'artist' ? 'artist' : 'album';
     
-    try {
-      const response = await fetch(
-        `${this.baseUrl}/search?q=${encodeURIComponent(query)}&type=${searchType}&offset=${offset}&limit=20`,
-        {
-          headers: {
-            Authorization: `Bearer ${this.getAccessToken()}`,
-          },
-        }
-      );
+    const data = await this.makeApiRequest(
+      `/search?q=${encodeURIComponent(query)}&type=${searchType}&offset=${offset}&limit=20`
+    );
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error?.message || 'Failed to fetch search results');
-      }
-
-      const data = await response.json();
-      const items = data[`${searchType}s`]?.items || [];
-      const total = data[`${searchType}s`]?.total || 0;
-
-      return {
-        items,
-        total,
-        offset,
-        limit: 20
-      };
-    } catch (error) {
-      console.error('Search error:', error);
-      throw new Error('Failed to search. Please try again later.');
-    }
+    return {
+      items: data[`${searchType}s`]?.items || [],
+      total: data[`${searchType}s`]?.total || 0,
+      offset,
+      limit: 20
+    };
   }
 
   async getAlbum(albumId) {
-    try {
-      const response = await fetch(
-        `${this.baseUrl}/albums/${albumId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${this.getAccessToken()}`,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error?.message || 'Failed to fetch album details');
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error('Get album error:', error);
-      throw new Error('Failed to fetch album details. Please try again later.');
-    }
+    return await this.makeApiRequest(`/albums/${albumId}`);
   }
 
   async getArtist(artistId) {
-    try {
-      const response = await fetch(
-        `${this.baseUrl}/artists/${artistId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${this.getAccessToken()}`,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error?.message || 'Failed to fetch artist details');
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error('Get artist error:', error);
-      throw new Error('Failed to fetch artist details. Please try again later.');
-    }
+    return await this.makeApiRequest(`/artists/${artistId}`);
   }
 
   async getArtistAlbums(artistId) {
-    try {
-      const response = await fetch(
-        `${this.baseUrl}/artists/${artistId}/albums?include_groups=album,single&market=US&limit=50`,
-        {
-          headers: {
-            Authorization: `Bearer ${this.getAccessToken()}`,
-          },
-        }
-      );
+    return await this.makeApiRequest(
+      `/artists/${artistId}/albums?include_groups=album,single&market=US&limit=50`
+    );
+  }
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error?.message || 'Failed to fetch artist albums');
-      }
+  async getAlbumTracks(albumId) {
+    return await this.makeApiRequest(`/albums/${albumId}/tracks?limit=50`);
+  }
 
-      return await response.json();
-    } catch (error) {
-      console.error('Get artist albums error:', error);
-      throw new Error('Failed to fetch artist albums. Please try again later.');
-    }
+  async getTrackPreview(trackId) {
+    return await this.makeApiRequest(`/tracks/${trackId}`);
   }
 }
 

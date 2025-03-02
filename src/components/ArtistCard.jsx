@@ -199,7 +199,6 @@ ArtistCard.propTypes = {
       spotify: PropTypes.string,
     }),
   }).isRequired,
-  onSelect: PropTypes.func.isRequired,
 };
 
 export default ArtistCard;
