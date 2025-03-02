@@ -49,7 +49,7 @@ jobs:
       - name: Fix dist/index.html if needed
         run: |
           # Check if the script tag still references the JSX file directly
-          if grep -q "src=\"src/main.jsx\"" dist/index.html; then
+          if grep -q "src=\"./src/main.jsx\"" dist/index.html; then
             echo "Fixing index.html script reference..."
             # Find the actual JS file that was generated
             MAIN_JS=$(find dist/assets -name "main-*.js" | head -1)
@@ -57,7 +57,7 @@ jobs:
               # Extract just the filename
               FILENAME=$(basename $MAIN_JS)
               # Update the index.html to reference this file
-              sed -i "s|src=\"src/main.jsx\"|src=\"assets/$FILENAME\"|g" dist/index.html
+              sed -i "s|src=\"./src/main.jsx\"|src=\"assets/$FILENAME\"|g" dist/index.html
               echo "Updated index.html to reference $FILENAME"
               cat dist/index.html
             else

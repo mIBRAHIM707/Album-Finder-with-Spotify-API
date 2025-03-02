@@ -11,9 +11,6 @@ export default defineConfig({
     sourcemap: false,
     // Ensure HTML file handles 404 redirects for SPA
     rollupOptions: {
-      input: {
-        main: 'index.html',
-      },
       output: {
         manualChunks: undefined,
         assetFileNames: 'assets/[name]-[hash][extname]',
