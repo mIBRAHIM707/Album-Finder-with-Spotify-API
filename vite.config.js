@@ -4,7 +4,18 @@ import react from '@vitejs/plugin-react'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/Album-Finder-with-Spotify-API/', // Add this line for GitHub Pages
+  base: '/Album-Finder-with-Spotify-API/',
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    sourcemap: false,
+    // Ensure HTML file handles 404 redirects for SPA
+    rollupOptions: {
+      output: {
+        manualChunks: undefined
+      }
+    }
+  },
   server: {
     proxy: {
       '/api/token': {

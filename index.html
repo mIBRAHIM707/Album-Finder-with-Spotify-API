@@ -2,16 +2,42 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" href="/logo.jpeg" />
+    <base href="/Album-Finder-with-Spotify-API/" />
+    <link rel="icon" type="image/jpeg" href="logo.jpeg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>mibrahim707 Album Finder with Spotify Api</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      // Handle GitHub Pages SPA routing
+      (function() {
+        // Don't run this in development
+        if (window.location.hostname === 'localhost') return;
+        
+        // Only run this script on the gh-pages domain
+        if (window.location.hostname.includes('github.io')) {
+          console.log('GitHub Pages SPA routing script activated');
+          
+          // If not a direct navigation to the root, redirect to the hash-based route
+          const path = window.location.pathname.split('/');
+          const isRoot = path.length <= 2 || 
+                        (path.length === 3 && path[2] === '');
+          
+          if (!isRoot && !window.location.pathname.endsWith('.html')) {
+            const redirectPath = window.location.pathname.replace('/Album-Finder-with-Spotify-API', '');
+            window.location.replace(
+              '/Album-Finder-with-Spotify-API/#' + redirectPath
+            );
+          }
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <script src="/Album-Finder-with-Spotify-API/debug.js" defer></script>
   </body>
 </html>
