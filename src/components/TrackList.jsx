@@ -143,9 +143,17 @@ TrackList.propTypes = {
     PropTypes.shape({
       id: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
-      preview_url: PropTypes.string,
       duration_ms: PropTypes.number.isRequired,
-      explicit: PropTypes.bool.isRequired,
+      track_number: PropTypes.number.isRequired,
+      preview_url: PropTypes.string,
+      external_urls: PropTypes.shape({
+        spotify: PropTypes.string,
+      }),
+      artists: PropTypes.arrayOf(
+        PropTypes.shape({
+          name: PropTypes.string.isRequired,
+        })
+      ),
     })
   ).isRequired,
 };

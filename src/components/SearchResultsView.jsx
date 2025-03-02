@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
@@ -11,7 +11,7 @@ import Pagination from './Pagination';
 import spotifyApi from '../services/spotifyApi';
 
 const ResultsContainer = styled(Container)`
-  padding-top: var(--space-xl);
+  padding-top: calc(80px + var(--space-xl)); /* Increased top padding to account for fixed header */
   padding-bottom: var(--space-xl);
   min-height: calc(100vh - 80px);
 `;
@@ -43,7 +43,7 @@ const SearchResultsView = () => {
   const query = searchParams.get('q') || '';
   const type = searchParams.get('type') || 'artist';
 
-  const handleSearch = async (searchQuery, searchType, page = 1) => {
+  const handleSearch = useCallback(async (searchQuery, searchType, page = 1) => {
     if (!searchQuery.trim()) return;
     
     setSearchParams({ q: searchQuery, type: searchType });
@@ -61,33 +61,22 @@ const SearchResultsView = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [setSearchParams]);
 
   useEffect(() => {
     if (query) {
       handleSearch(query, type, currentPage);
     }
-  }, [query, type]);
+  }, [query, type, currentPage, handleSearch]);
 
-  const handlePageChange = (page) => {
+  const handlePageChange = useCallback((page) => {
     handleSearch(query, type, page);
     window.scrollTo(0, 0);
-  };
+  }, [query, type, handleSearch]);
 
-  const handleArtistSelect = (artistId) => {
-    // Future implementation for artist view
-    console.log('Selected artist:', artistId);
-  };
-
-  return (
-    <ResultsContainer>
-      <EnhancedSearch 
-        initialQuery={query}
-        initialType={type}
-        onSearch={handleSearch}
-      />
-      
-      {loading ? (
+  const renderedResults = useMemo(() => {
+    if (loading) {
+      return (
         <ResultsGrid xs={1} sm={2} md={3} lg={4} xl={5} className="g-4">
           {[...Array(8)].map((_, index) => (
             <Col key={index}>
@@ -95,11 +84,19 @@ const SearchResultsView = () => {
             </Col>
           ))}
         </ResultsGrid>
-      ) : error ? (
-        <ErrorMessage message={error} />
-      ) : searchResults.length === 0 && query ? (
-        <NoResults>No results found. Try searching for something else.</NoResults>
-      ) : searchResults.length > 0 ? (
+      );
+    }
+
+    if (error) {
+      return <ErrorMessage message={error} />;
+    }
+
+    if (searchResults.length === 0 && query) {
+      return <NoResults>No results found. Try searching for something else.</NoResults>;
+    }
+
+    if (searchResults.length > 0) {
+      return (
         <>
           <ResultsCount>
             Showing {searchResults.length} results for "{query}"
@@ -124,9 +121,22 @@ const SearchResultsView = () => {
             />
           )}
         </>
-      ) : null}
+      );
+    }
+
+    return null;
+  }, [searchResults, query, type, loading, error, totalPages, currentPage, handlePageChange]);
+
+  return (
+    <ResultsContainer>
+      <EnhancedSearch 
+        initialQuery={query}
+        initialType={type}
+        onSearch={handleSearch}
+      />
+      {renderedResults}
     </ResultsContainer>
   );
 };
 
-export default SearchResultsView;
+export default React.memo(SearchResultsView);
