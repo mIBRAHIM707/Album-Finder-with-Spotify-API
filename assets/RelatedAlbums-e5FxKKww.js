@@ -1,4 +1,4 @@
-import{r as d,j as t,C as g,A as h,h as s,R as f}from"./index-DFNNv57H.js";const u=s.section`
+import{r as d,j as t,C as g,A as h,h as s,R as f}from"./main-Bxln_YLJ.js";const u=s.section`
   margin-top: var(--space-xl);
   padding-top: var(--space-xl);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
