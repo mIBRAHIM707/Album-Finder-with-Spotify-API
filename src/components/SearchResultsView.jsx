@@ -110,7 +110,7 @@ const SearchResultsView = () => {
                 {type === 'album' ? (
                   <AlbumCard album={item} />
                 ) : (
-                  <ArtistCard artist={item} onSelect={() => handleArtistSelect(item.id)} />
+                  <ArtistCard artist={item} />
                 )}
               </Col>
             ))}

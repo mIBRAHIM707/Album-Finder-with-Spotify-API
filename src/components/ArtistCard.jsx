@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Card } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import styled, { keyframes } from 'styled-components';
-import { BsPeople, BsSpotify } from 'react-icons/bs';
+import { BsPeople, BsSpotify, BsMusicNote } from 'react-icons/bs';
 
 const fadeIn = keyframes`
   from { opacity: 0; transform: translateY(10px); }
@@ -137,12 +138,17 @@ const SpotifyButton = styled.a`
   }
 `;
 
-const ArtistCard = ({ artist, onSelect }) => {
+const ArtistCard = ({ artist }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/artist/${artist.id}`);
+  };
 
   return (
     <StyledCard 
-      onClick={onSelect}
+      onClick={handleClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -154,7 +160,7 @@ const ArtistCard = ({ artist, onSelect }) => {
         <Overlay>
           {isHovered && (
             <MetaInfo>
-              <span><BsPeople /> {artist.followers?.total?.toLocaleString()} followers</span>
+              <span><BsMusicNote /> {artist.followers?.total?.toLocaleString()} followers</span>
             </MetaInfo>
           )}
         </Overlay>

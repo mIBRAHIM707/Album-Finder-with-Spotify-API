@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { Card } from 'react-bootstrap';
 import { BsPeopleFill, BsSpotify } from 'react-icons/bs';
+import PropTypes from 'prop-types';
 
 const InfoCard = styled(Card)`
   background: var(--color-card);
@@ -95,33 +96,7 @@ const SpotifyButton = styled.a`
   }
 `;
 
-const ArtistInfo = ({ artistId }) => {
-  const [artist, setArtist] = useState(null);
-  const accessToken = localStorage.getItem('accessToken');
-
-  useEffect(() => {
-    const fetchArtistInfo = async () => {
-      try {
-        const response = await fetch(
-          `https://api.spotify.com/v1/artists/${artistId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-        const data = await response.json();
-        setArtist(data);
-      } catch (error) {
-        console.error('Error fetching artist info:', error);
-      }
-    };
-
-    if (artistId && accessToken) {
-      fetchArtistInfo();
-    }
-  }, [artistId, accessToken]);
-
+const ArtistInfo = ({ artist }) => {
   if (!artist) return null;
 
   return (
@@ -153,6 +128,24 @@ const ArtistInfo = ({ artistId }) => {
       </Card.Body>
     </InfoCard>
   );
+};
+
+ArtistInfo.propTypes = {
+  artist: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    images: PropTypes.arrayOf(
+      PropTypes.shape({
+        url: PropTypes.string.isRequired,
+      })
+    ),
+    genres: PropTypes.arrayOf(PropTypes.string),
+    followers: PropTypes.shape({
+      total: PropTypes.number,
+    }),
+    external_urls: PropTypes.shape({
+      spotify: PropTypes.string,
+    }),
+  }).isRequired,
 };
 
 export default ArtistInfo;

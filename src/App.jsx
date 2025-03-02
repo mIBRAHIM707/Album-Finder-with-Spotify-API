@@ -6,6 +6,7 @@ import AlbumDetails from "./AlbumDetails";
 import Header from './components/Header';
 import HomePage from './components/HomePage';
 import SearchResultsView from './components/SearchResultsView';
+import ArtistDetails from './components/ArtistDetails';
 
 function App() {
   const [accessToken, setAccessToken] = useState("");
@@ -47,6 +48,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/search" element={<SearchResultsView />} />
         <Route path="/album/:id" element={<AlbumDetails />} />
+        <Route path="/artist/:id" element={<ArtistDetails />} />
         <Route 
           path="/favorites" 
           element={
