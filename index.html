@@ -33,7 +33,7 @@
     <script>
       document.getElementById('debug').style.display = 'block';
     </script>
-    <!-- Fix: Remove leading slash to make path relative to base -->
-    <script type="module" src="src/main.jsx"></script>
+    <!-- Use a special comment that Vite will replace with the proper path during build -->
+    <script type="module" src="./src/main.jsx"></script>
   </body>
 </html>

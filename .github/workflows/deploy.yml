@@ -43,6 +43,29 @@ jobs:
           ls -la dist/
           echo "Checking index.html:"
           cat dist/index.html
+          echo "Checking assets directory:"
+          ls -la dist/assets/
+
+      - name: Fix dist/index.html if needed
+        run: |
+          # Check if the script tag still references the JSX file directly
+          if grep -q "src=\"src/main.jsx\"" dist/index.html; then
+            echo "Fixing index.html script reference..."
+            # Find the actual JS file that was generated
+            MAIN_JS=$(find dist/assets -name "main-*.js" | head -1)
+            if [ -n "$MAIN_JS" ]; then
+              # Extract just the filename
+              FILENAME=$(basename $MAIN_JS)
+              # Update the index.html to reference this file
+              sed -i "s|src=\"src/main.jsx\"|src=\"assets/$FILENAME\"|g" dist/index.html
+              echo "Updated index.html to reference $FILENAME"
+              cat dist/index.html
+            else
+              echo "Could not find main JS file in assets directory"
+            fi
+          else
+            echo "index.html already has correct script references"
+          fi
 
       - name: Copy 404.html
         run: cp public/404.html dist/
