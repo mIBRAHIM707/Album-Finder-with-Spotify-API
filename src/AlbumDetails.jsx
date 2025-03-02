@@ -20,6 +20,7 @@ const AlbumHeader = styled.div`
   gap: var(--space-lg);
   margin-bottom: var(--space-xl);
   flex-wrap: wrap;
+  align-items: center;
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -27,15 +28,15 @@ const AlbumHeader = styled.div`
 `;
 
 const AlbumCover = styled.img`
-  width: 300px;
-  height: 300px;
+  width: 350px;
+  height: 350px;
   object-fit: cover;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
 
   @media (max-width: 768px) {
     width: 100%;
-    max-width: 300px;
+    max-width: 350px;
     margin: 0 auto;
   }
 `;
@@ -43,6 +44,16 @@ const AlbumCover = styled.img`
 const AlbumInfo = styled.div`
   flex: 1;
   min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 300px;
+
+  @media (max-width: 768px) {
+    height: auto;
+    text-align: center;
+    align-items: center;
+  }
 `;
 
 const AlbumTitle = styled.h1`
@@ -60,6 +71,7 @@ const AlbumMeta = styled.div`
 const SpotifyButton = styled.a`
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
   background: var(--color-primary);
   color: black;
@@ -68,7 +80,11 @@ const SpotifyButton = styled.a`
   text-decoration: none;
   font-weight: 600;
   transition: var(--transition-default);
-  margin-top: var(--space-md);
+  align-self: center; /* Changed from flex-start to center */
+
+  @media (max-width: 768px) {
+    align-self: center;
+  }
 
   &:hover {
     background: var(--color-primary-hover);

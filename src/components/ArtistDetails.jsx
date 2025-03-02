@@ -10,8 +10,10 @@ import AlbumCard from './AlbumCard';
 import spotifyApi from '../services/spotifyApi';
 
 const ArtistContainer = styled(Container)`
-  margin-top: 80px;
-  padding: var(--space-xl) var(--space-md);
+  padding-top: calc(80px + var(--space-xl));
+  padding-bottom: var(--space-xl);
+  padding-left: var(--space-md);
+  padding-right: var(--space-md);
 `;
 
 const AlbumsSection = styled.section`

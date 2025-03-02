@@ -21,7 +21,7 @@ const InfoCard = styled(Card)`
 
 const ArtistHeader = styled.div`
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: var(--space-md);
   margin-bottom: var(--space-lg);
 `;

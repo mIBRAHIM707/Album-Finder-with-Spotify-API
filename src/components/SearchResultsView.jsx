@@ -11,7 +11,7 @@ import Pagination from './Pagination';
 import spotifyApi from '../services/spotifyApi';
 
 const ResultsContainer = styled(Container)`
-  padding-top: calc(80px + var(--space-xl)); /* Increased top padding to account for fixed header */
+  padding-top: calc(80px + var(--space-xl) + var(--space-xl)); /* Increased top padding */
   padding-bottom: var(--space-xl);
   min-height: calc(100vh - 80px);
 `;
@@ -30,6 +30,10 @@ const ResultsCount = styled.p`
   color: var(--color-text-secondary);
   margin: var(--space-md) 0;
   font-size: 0.9rem;
+`;
+
+const SearchBarContainer = styled.div`
+  margin-bottom: var(--space-xl);
 `;
 
 const SearchResultsView = () => {
@@ -129,11 +133,13 @@ const SearchResultsView = () => {
 
   return (
     <ResultsContainer>
-      <EnhancedSearch 
-        initialQuery={query}
-        initialType={type}
-        onSearch={handleSearch}
-      />
+      <SearchBarContainer>
+        <EnhancedSearch 
+          initialQuery={query}
+          initialType={type}
+          onSearch={handleSearch}
+        />
+      </SearchBarContainer>
       {renderedResults}
     </ResultsContainer>
   );
