@@ -78,7 +78,7 @@ const Header = () => {
       <Container>
         <Navbar.Brand as="div">
           <Brand to="/">
-            <Logo src="/logo.jpeg" alt="Site Logo" />
+            <Logo src="/Album-Finder-with-Spotify-API/logo.jpeg" alt="Site Logo" />
             <SiteName>
               <Title>mIbrahim707's Music Explorer</Title>
               <Subtitle>Powered by Spotify</Subtitle>
