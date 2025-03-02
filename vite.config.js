@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  base: '/Album-Finder-with-Spotify-API/', // Add this line for GitHub Pages
   server: {
     proxy: {
       '/api/token': {

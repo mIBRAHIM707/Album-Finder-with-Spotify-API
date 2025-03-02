@@ -1,7 +1,7 @@
 import "./App.css";
 import { Container } from "react-bootstrap";
 import { useState, useEffect } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { HashRouter as Router, Route, Routes } from "react-router-dom";
 import AlbumDetails from "./AlbumDetails";
 import Header from './components/Header';
 import HomePage from './components/HomePage';
@@ -24,7 +24,7 @@ function App() {
           body: `grant_type=client_credentials&client_id=${clientId}&client_secret=${clientSecret}`,
         };
 
-        const result = await fetch("/api/token", authParams);
+        const result = await fetch("https://accounts.spotify.com/api/token", authParams);
         const data = await result.json();
         
         if (!result.ok) {
