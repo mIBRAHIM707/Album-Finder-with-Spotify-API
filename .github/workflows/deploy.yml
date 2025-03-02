@@ -8,13 +8,9 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write  # This is important for the deploy action to work
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        with:
-          persist-credentials: false  # Very important for deployment
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -37,7 +33,6 @@ jobs:
           VITE_CLIENT_ID: ${{ secrets.VITE_CLIENT_ID }}
           VITE_CLIENT_SECRET: ${{ secrets.VITE_CLIENT_SECRET }}
 
-      # Add an extra step to copy 404.html to dist
       - name: Copy 404.html
         run: cp public/404.html dist/
 
@@ -45,7 +40,7 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: dist
-          branch: gh-pages
           token: ${{ secrets.GITHUB_TOKEN }}  # Use the automatically provided token
           clean: true  # This removes old files
           commit-message: "Deploy to GitHub Pages [skip ci]"
+          branch: gh-pages

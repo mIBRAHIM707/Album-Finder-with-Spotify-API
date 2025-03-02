@@ -11,7 +11,7 @@ import Pagination from './Pagination';
 import spotifyApi from '../services/spotifyApi';
 
 const ResultsContainer = styled(Container)`
-  padding-top: calc(80px + var(--space-xl) + var(--space-xl)); /* Increased top padding */
+  padding-top: 180px; /* Increased from 140px to prevent header overlap */
   padding-bottom: var(--space-xl);
   min-height: calc(100vh - 80px);
 `;
