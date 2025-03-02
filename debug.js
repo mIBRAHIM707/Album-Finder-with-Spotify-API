@@ -1,4 +1,4 @@
-// Simple debug script to help identify GitHub Pages issues
+    // Simple debug script to help identify GitHub Pages issues
 (function() {
   // Log environment information
   console.log('Page URL:', window.location.href);
