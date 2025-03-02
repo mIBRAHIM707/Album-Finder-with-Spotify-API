@@ -21,14 +21,14 @@ const InfoCard = styled(Card)`
 
 const ArtistHeader = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-md);
   margin-bottom: var(--space-lg);
 `;
 
 const ArtistImage = styled.img`
-  width: 120px;
-  height: 120px;
+  width: 150px;
+  height: 150px;
   border-radius: var(--radius-md);
   object-fit: cover;
   box-shadow: var(--shadow-md);
@@ -36,12 +36,17 @@ const ArtistImage = styled.img`
 
 const ArtistDetails = styled.div`
   flex: 1;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 `;
 
 const ArtistName = styled.h3`
   margin: 0 0 var(--space-xs);
   color: var(--color-text);
   font-weight: 700;
+  font-size: 2rem;
 `;
 
 const GenresList = styled.div`
@@ -49,6 +54,7 @@ const GenresList = styled.div`
   flex-wrap: wrap;
   gap: var(--space-xs);
   margin-bottom: var(--space-sm);
+  text-align: left;
 `;
 
 const Genre = styled.span`
@@ -65,6 +71,7 @@ const Stats = styled.div`
   gap: var(--space-md);
   color: var(--color-text-secondary);
   font-size: 0.9rem;
+  margin-bottom: var(--space-md);
 
   svg {
     margin-right: var(--space-xs);
@@ -75,24 +82,29 @@ const SpotifyButton = styled.a`
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: var(--color-primary);
-  color: black;
-  padding: 0.5rem 1rem;
+  background: var(--color-surface);
+  color: var(--color-text);
+  padding: 0.75rem 1.25rem;
   border-radius: var(--radius-pill);
   text-decoration: none;
   font-weight: 600;
   font-size: 0.9rem;
   transition: var(--transition-default);
-  margin-top: var(--space-md);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 
   &:hover {
-    background: var(--color-primary-hover);
-    transform: translateY(-2px);
+    background: var(--color-primary);
     color: black;
+    transform: translateY(-2px);
   }
 
   svg {
     font-size: 1.2rem;
+    color: var(--color-primary);
+  }
+
+  &:hover svg {
+    color: black;
   }
 `;
 
